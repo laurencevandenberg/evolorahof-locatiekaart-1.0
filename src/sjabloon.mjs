@@ -145,7 +145,7 @@ const navigatie = (teksten) => `
   <nav class="sprong" aria-label="secties">
     <a href="#pve">${escapeHtml(teksten['nav-pve'])}</a>
     <a href="#verkenning">${escapeHtml(teksten['nav-verkenning'])}</a>
-    <a href="kaart.html">${escapeHtml(teksten['knop-kaart'])}</a>
+    <a href="index.html">${escapeHtml(teksten['knop-kaart'])}</a>
   </nav>`;
 
 export function bouwPagina({ inhoud, panelen, cijfers, stellingen, css, waarschuwingen }) {
@@ -180,7 +180,7 @@ ${css}
         data-naar-licht="${escapeHtml(t['knop-licht'])}">${escapeHtml(t['knop-donker'])}</button>
       <button class="knop" id="tabelknop" aria-pressed="false"
         aria-controls="tabelpaneel">${escapeHtml(t['knop-tabel'])}</button>
-      <a class="knop" href="kaart.html">${escapeHtml(t['knop-kaart'])}</a>
+      <a class="knop" href="index.html">${escapeHtml(t['knop-kaart'])}</a>
     </div>
   </div>
 

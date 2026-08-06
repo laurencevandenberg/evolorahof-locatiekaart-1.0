@@ -7,7 +7,7 @@ kop-rest: over eens zijn.
 knop-donker: donkere modus
 knop-licht: lichte modus
 knop-tabel: toon als tabel
-knop-kaart: open de kaart
+knop-kaart: naar de zeef
 ---
 
 # Teksten
@@ -138,10 +138,10 @@ twee wegingen naast elkaar.
 
 De brede locatieverkenning van 16 juli weegt ook, over negen eigen criteria. Vertaald
 naar dezelfde negen thema's is te zien waar de verkenning en de groep het oneens zijn
-over wat ertoe doet. De grijze band loopt van spoor A naar spoor B; de groene stip is de
-weging van de groep. Ligt de stip buiten de band, dan kijken de twee modellen wezenlijk
-anders naar dat thema. De verkenning weegt of een plek haalbaar is, de groep weegt of
-het er goed wonen is, en geen van beide meet wat het andere belangrijk vindt.
+over wat ertoe doet. De grijze stip is de verkenning, de groene stip is de groep, en de
+lijn ertussen is het verschil. Hoe langer die lijn, hoe verder de twee modellen uit
+elkaar liggen op dat thema. De verkenning weegt of een plek haalbaar is, de groep weegt
+of het er goed wonen is, en geen van beide meet wat het andere belangrijk vindt.
 
 ## kandidaten-titel
 
@@ -171,7 +171,7 @@ plekken met themascores.
 
 ## kaart-knop
 
-open de kaart
+naar de zeef
 
 ## nav-pve
 

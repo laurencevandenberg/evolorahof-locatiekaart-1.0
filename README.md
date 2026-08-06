@@ -1,16 +1,24 @@
 # Evolorahof locatiekaart 1.0
 
-Twee dingen naast elkaar, want los van elkaar zeggen ze te weinig.
+Twee pagina's.
 
-**Wat wij willen.** Wat de groep breed draagt, wat er net overheen komt en waar zij in
-tweeën ligt, op basis van de acht ingevulde stellingenformulieren van 26 juli 2026.
+**`dist/index.html` is de zeef.** De kaart staat centraal en onze eisen zijn de
+bediening ernaast: zet een grens vast en de plekken die hem raken vallen ter plekke af,
+schuif een gewicht op en de kleuren verschuiven mee. Dit is de opvolger van de knop "wat
+doen onze eisen?" uit de oorspronkelijke rekentool, maar dan zonder knop: het antwoord
+staat er al terwijl je nog aan het schuiven bent.
 
-**Wat er is.** De brede locatieverkenning van 16 juli 2026: 48 benoemde kandidaten en
-283 perceel-leads in de regio's Arnhem, Apeldoorn en 's-Hertogenbosch, met een kaart.
+**`dist/analyse.html` is de analyse.** Wat de groep breed draagt, wat er net overheen
+komt en waar zij in tweeën ligt, op basis van de acht ingevulde stellingenformulieren
+van 26 juli 2026. Daarnaast wat de brede locatieverkenning van 16 juli 2026 opleverde:
+48 benoemde kandidaten en 283 perceel-leads in de regio's Arnhem, Apeldoorn en
+'s-Hertogenbosch. En de plek waar de twee elkaar raken: de verkenning weegt óók, over
+negen eigen criteria, en vertaald naar dezelfde negen thema's blijkt dat de twee
+modellen het grondig oneens zijn over wat ertoe doet.
 
-En de plek waar ze elkaar raken: de verkenning weegt óók, over negen eigen criteria.
-Vertaald naar dezelfde negen thema's blijkt dat de twee modellen het grondig oneens zijn
-over wat ertoe doet.
+De zeef is om mee te werken, de analyse is om te lezen. Ze verwijzen naar elkaar en ze
+rekenen met dezelfde functies uit `src/kern.mjs`; die broncode wordt letterlijk in de
+zeefpagina geplakt, zodat de kaart en de analyse nooit uiteen kunnen lopen.
 
 De kern van het ontwerp: **alles wat je zonder programmeren wilt kunnen veranderen,
 staat in `inhoud/` als Markdown.** Kleuren, teksten, stellingen, antwoorden, grenzen,
@@ -19,16 +27,20 @@ bewerken. De code in `src/` rekent en tekent, en bevat geen enkel getal dat over
 Evolorahof gaat.
 
 ```
-npm run bouw          bouwt dist/index.html en dist/kaart.html
+npm run bouw          bouwt dist/index.html en dist/analyse.html
 npm test              rekent alle uitspraken na
 npm run controleer    toetst de kleuren op contrast en kleurenblindheid
 npm run alles         alle drie achter elkaar
+npm run vergelijk     bouwt er een tweede stel met de andere weegmethode naast
 ```
 
 Er zijn geen afhankelijkheden. Node 18 of nieuwer is genoeg; `npm install` is niet
-nodig. Open daarna `dist/index.html` in een browser. Dat bestand is zelfstandig: geen
-internet nodig, dus het werkt op een beamer in een zaal zonder wifi. Alleen
-`dist/kaart.html` heeft verbinding nodig, voor de achtergrondkaart.
+nodig. Open daarna `dist/index.html` in een browser.
+
+Beide pagina's werken zonder internet. De zeef gebruikt de achtergrondkaart van
+OpenStreetMap als die er is, en tekent anders dezelfde punten zelf, met een melding
+erbij. De onderlinge ligging klopt dan nog steeds en alle bediening blijft werken, dus
+een zaal zonder wifi is geen probleem.
 
 ---
 
@@ -49,6 +61,10 @@ internet nodig, dus het werkt op een beamer in een zaal zonder wifi. Alleen
 | de 283 perceel-leads | `inhoud/10-perceel-leads.md` |
 | de criteria en wegingen van de verkenning | `inhoud/11-scoremodel.md` |
 
+De huisstijl levert ook het achtpuntsstramien (`--sp-1` tot `--sp-8`) waar alle
+witruimte uit komt, en de kleuren van de kaartstippen. Er staat dus geen kleur- of
+maatwaarde in de code.
+
 Zie `inhoud/LEESMIJ.md` voor het formaat en de veelgemaakte fouten.
 
 De bouw stopt bij de eerste fout in de inhoud en zegt in welk bestand en op welke regel
@@ -57,7 +73,7 @@ bij hoort, is gevaarlijker dan een bouw die weigert.
 
 ---
 
-## Wat het dashboard laat zien
+## Wat de analyse laat zien
 
 **De ladder** is het hart. De verticale as is de *eensgezindheid*: één min de gemiddelde
 afstand tussen twee willekeurige antwoorden. Dat scheidt twee dingen die anders door
@@ -88,10 +104,10 @@ Daaronder begint de afdeling over de verkenning.
 **Twee wegingen naast elkaar** is het scharnier van het hele dashboard. De verkenning
 verdeelt honderd punten over negen criteria, de groep over negen thema's, en via de
 kolom `pve-thema` in `11-scoremodel.md` liggen ze op dezelfde as. Wat eruit komt: de
-verkenning legt 40 tot 53 punten op planologie, bestuur en verwerving waar de groep er
-6,4 op legt, en de verkenning weegt niets op bodem, op lucht en geluid en op
-voorzieningen, terwijl de groep daar samen ruim dertig punten neerlegt. De verkenning
-meet of een plek haalbaar is, de groep meet of het er goed wonen is.
+verkenning legt 40 punten op planologie, bestuur en verwerving waar de groep er 6,4 op
+legt, en de verkenning weegt niets op bodem, op lucht en geluid en op voorzieningen,
+terwijl de groep daar samen ruim dertig punten neerlegt. De verkenning meet of een plek
+haalbaar is, de groep meet of het er goed wonen is.
 
 **De achtenveertig kandidaten** laat alle kandidaten tegelijk zien, per regio en op
 prioriteit. Een gestippeld blokje heeft geen themascores en telt dus nergens in mee.
@@ -102,11 +118,35 @@ samen is er niet één gescoord.
 Let op de verhouding door de hele keten: 283 leads, 48 kandidaten, 12 plekken met
 themascores.
 
-**De kaart** staat op een eigen pagina, `dist/kaart.html`, met alle kandidaten en leads
-en filters op regio, spoor, prioriteit en categorie die elkaar snijden. Dat is de enige
-pagina die internet nodig heeft, want de achtergrondkaart komt van OpenStreetMap. Zonder
-verbinding toont hij een melding in plaats van een leeg vlak; `index.html` blijft
-zelfstandig.
+---
+
+## Wat de zeef doet
+
+Links staan de eisen, in de volgorde waarin ze tellen.
+
+**1 · de grenzen.** De acht knock-outs uit `06-knock-outs.md`, elk met een schakelaar.
+Achter elke schakelaar staat hoeveel plekken die grens nog wegneemt *bovenop* wat er al
+vaststaat. Zet je K2 aan, dan zakt het getal achter K8 naar nul: die twee raken dezelfde
+plekken, dus samen nemen ze er niet tien weg maar vijf. Dat is precies het soort ding
+dat je in een tabel niet ziet en in een gesprek eindeloos kost.
+
+**2 · de weging.** Negen schuiven, standaard op de weging uit ons eigen
+stellingenformulier. Schuiven mag: dan zie je meteen wat een andere verdeling met de
+volgorde doet. Eén knop zet alles terug.
+
+**3 · de drempels en de lagen.** Vanaf welk cijfer iets groen mag heten, hoeveel thema's
+er minimaal ingevuld moeten zijn voordat groen betekenis heeft, en welke lagen je op de
+kaart wilt: kandidaten, perceel-leads, archetypen, en per regio.
+
+Rechts staat de uitkomst: de teller, de kaart, wat er overblijft op volgorde van score
+met de onzekerheidsband eromheen, en onderaan wat afvalt met de grens erbij die het
+deed. De volgorde is niet vrijblijvend: **een plek die een vastgestelde grens raakt valt
+af, hoe hoog hij verder ook scoort.** Dat is precies wat een gewogen gemiddelde niet kan
+uitdrukken, en daarom staan de grenzen bovenaan en de weging eronder.
+
+De zeef rekent in de browser met dezelfde functies als `npm test` natrekt. De inhoud van
+`src/kern.mjs` wordt bij het bouwen letterlijk in de pagina geplakt in plaats van
+nagebouwd; er is een test die controleert dat dat ook echt gebeurd is.
 
 ---
 
@@ -131,6 +171,12 @@ voetnoot van het dashboard.
 het PvE landt. Vind je dat "prijs en onzekerheid" eerder bij thema H hoort dan bij F,
 pas de kolom dan aan en bouw opnieuw. Dat de vertaling aanvechtbaar is, is precies
 waarom ze in een Markdown-bestand staat en niet in de code.
+
+**De tweedeling in sporen is eruit.** De verkenning kende twee wegingsprofielen naast
+elkaar, een netgebonden en een energie-autonoom profiel met waterstof. Het model draait
+nu op één weging, het netgebonden profiel; zie de toelichting bovenaan
+`11-scoremodel.md`. De kolom `spoor` staat nog wel in `09-kandidaten.md` en
+`10-perceel-leads.md`, als archief van de verkenning, maar de tool doet er niets mee.
 
 **De antwoorden worden per stelling gehusseld.** Je ziet de verdeling maar niet wie wat
 invulde, in lijn met de afspraak dat individuele profielen alleen met instemming worden
@@ -160,15 +206,20 @@ src/
   bereken.mjs    de rekenkern; elke functie is puur en getest
   stijl.mjs      het stijlblad uit de huisstijltabellen
   svg.mjs        hulpjes om svg als tekst te bouwen
-  sjabloon.mjs   het html-skelet en de interactielaag
+  kern.mjs       de rekenkern die bouw en browser delen; zonder imports, met opzet
+  sjabloon.mjs   het html-skelet en de interactielaag van de analyse
   panelen/       de acht grafieken, elk in een eigen bestand
-  kaart.mjs      de losse kaartpagina met Leaflet
+  zeef.mjs       de zeefpagina: bediening, kaart en de ingeplakte kern
   bouw.mjs       ingang: leest, rekent, schrijft dist/
   controleer.mjs kleurcontrole (contrast, ramp, kleurenblindheid)
 test/            testloper zonder afhankelijkheden, plus de bundel
-dist/index.html  het gebouwde dashboard, meegecommit
-dist/kaart.html  de kaart, meegecommit
+dist/index.html  de zeef, meegecommit
+dist/analyse.html de analyse, meegecommit
 ```
+
+`src/kern.mjs` is met opzet klein en importeert niets: hij wordt zowel als module
+ingeladen door de bouw als letterlijk in de zeefpagina geplakt. Voeg er alleen zuivere
+functies aan toe, geen bestandssysteem en geen DOM.
 
 De grafieken worden **bij het bouwen** getekend, niet in de browser. Daardoor is het
 dashboard leesbaar zonder JavaScript en kun je de uitvoer in git vergelijken. De
@@ -177,9 +228,16 @@ meegeleverde JavaScript doet alleen de tooltips, de donkere modus en de tabelkno
 `npm test` rekent niet alleen de losse functies na, maar ook de cijfers die in de
 rapporten staan: de themagewichten, de 47 procent, de indeling van de stellingen, de
 trechter van twaalf naar drie, het wegingsverschil van 33,6 punten op thema F, en dat
-alle gescoorde plekken in één regio liggen. Verandert er iets aan de inhoud of de methode, dan zakt
-die test. Dat is het doel: de getallen in het dashboard en de getallen in de rapporten
-moeten dezelfde getallen zijn.
+alle gescoorde plekken in één regio liggen. Verandert er iets aan de inhoud of de
+methode, dan zakt die test. Dat is het doel: de getallen in het dashboard en de getallen
+in de rapporten moeten dezelfde getallen zijn.
+
+Twee controles gaan niet over cijfers maar over de bouw zelf, en staan er omdat het daar
+eerder is misgegaan. De ene kijkt of elke `var(--x)` in het stijlblad ook echt
+gedefinieerd is: een ontbrekende variabele geeft geen foutmelding in de browser, hij
+maakt stilletjes alle witruimte nul. De andere kijkt of de kern werkelijk in de
+zeefpagina staat. `npm test` schrijft zelf niets naar `dist/`; die bouw is een artefact
+van `npm run bouw`.
 
 ---
 

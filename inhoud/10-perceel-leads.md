@@ -22,6 +22,9 @@ Zo trek je er één na:
 4. **overstroming** overstroomik.nl en de Klimaateffectatlas
 5. **stikstof** afstand tot Natura 2000 plus een AERIUS-voortoets
 
+De kolom **spoor** komt uit de verkenning en staat er als archief bij; de tool doet er
+niets mee. Zie `11-scoremodel.md` voor waarom die tweedeling uit het model is gehaald.
+
 | id | regio | zoekzone | kadastrale aanduiding | opp (ha) | lat | lon | spoor |
 |---|---|---|---|---|---|---|---|
 | P071 | Apeldoorn | Beekbergen / Zuidrand | Apeldoorn AD 2208 | 1.72 | 52.180633 | 5.964242 | B |

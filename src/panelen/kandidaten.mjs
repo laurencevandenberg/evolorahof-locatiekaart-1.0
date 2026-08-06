@@ -68,8 +68,8 @@ export function kandidaten(lijst, { breedte }) {
       delen.push(trefvlak(bx, by, BLOK, BLOK,
         `<b>${kandidaat.id} · ${kandidaat.naam}</b><br>${kandidaat.gemeente}, ` +
         `${kandidaat.regio}<br><br>` +
-        `${kandidaat.categorie} · spoor ${kandidaat.spoor} · prioriteit ` +
-        `${kandidaat.prioriteit} · ${kandidaat.vertrouwen}<br>` +
+        `${kandidaat.categorie} · prioriteit ${kandidaat.prioriteit} · ` +
+        `${kandidaat.vertrouwen}<br>` +
         `omvang: ${kandidaat.omvang}<br><br>` +
         `${kandidaat.status}<br><i>${kandidaat.waarom}</i><br><br>` +
         (gescoord

@@ -13,13 +13,15 @@ planproces, maar nog geen perceelsgewijze toets.
 De kolommen betekenen het volgende.
 
 - **categorie** `kandidaat` is een mogelijke woonlocatie; `energiepartner` is een terrein
-  dat vooral als energie- of kennispartner voor spoor B interessant is; `referentie` is
-  een voorbeeld of bondgenoot; `uitsluiting` is bewust afgevallen.
+  dat vooral als energie- of kennispartner interessant is; `referentie` is een voorbeeld
+  of bondgenoot; `uitsluiting` is bewust afgevallen.
 - **vertrouwen** `geverifieerd` is met een bron bevestigd, `waarschijnlijk` is
   aannemelijk uit beleidsstukken, `lead` is een aanwijzing die nog nagetrokken moet worden.
-- **spoor** `A` netgebonden, `B` energie-autonoom met waterstof, `A+B` beide denkbaar.
 - **prioriteit** eigen analyse uit de verkenning, bedoeld om de weging bespreekbaar te
   maken en niet als hard oordeel.
+- **spoor** `A` netgebonden, `B` energie-autonoom met waterstof, `A+B` beide denkbaar.
+  Deze kolom komt uit de verkenning en staat er als archief bij; **de tool doet er niets
+  mee**. De tweedeling is uit het model gehaald, zie `11-scoremodel.md`.
 
 Wil je een kandidaat ook op de themascores beoordelen, geef hem dan dezelfde `id` in
 `07-locaties.md`. De tool koppelt de twee bestanden op dat veld.

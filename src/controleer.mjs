@@ -46,7 +46,7 @@ export function contrast(voor, achter) {
 }
 
 /** sRGB naar OKLab. Perceptueel gelijkmatig, dus geschikt om afstanden in te meten. */
-export function naarOklab(hex) {
+function naarOklab(hex) {
   const [r, g, b] = naarKanalen(hex).map(lineair);
   const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
   const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
@@ -75,7 +75,7 @@ const CVD_MATRIX = {
   tritan: [1.255528, -0.076749, -0.178779, -0.078411, 0.930809, 0.147602, 0.004733, 0.691367, 0.303900],
 };
 
-export function simuleer(hex, soort) {
+function simuleer(hex, soort) {
   const m = CVD_MATRIX[soort];
   const [r, g, b] = naarKanalen(hex);
   const kanaal = (i) => Math.min(1, Math.max(0, m[i] * r + m[i + 1] * g + m[i + 2] * b));
@@ -134,7 +134,20 @@ function controleerModus(naam, kleuren, ramp) {
     eis: 'minimaal 2:1, anders verdwijnt hij in de achtergrond',
   });
 
-  // 3. het statuspaar, ook door de ogen van een kleurenblinde
+  // 3. de stippen op de terugvalkaart. Die liggen op `verdiept` en niet op het
+  //    oppervlak, en ze zijn klein: als een van deze tinten daar wegvalt, is een plek
+  //    onvindbaar zonder dat er iets kapot lijkt.
+  for (const sleutel of ['groen', 'duindoorn', 'terra', 'flauw', 'lead']) {
+    const verhouding = contrast(kleuren[sleutel], kleuren.verdiept);
+    uitkomsten.push({
+      naam: `kaartstip ${sleutel} op verdiept`,
+      waarde: `${verhouding.toFixed(2)}:1`,
+      stand: verhouding >= 3 ? GESLAAGD : GEZAKT,
+      eis: 'minimaal 3:1',
+    });
+  }
+
+  // 4. het statuspaar, ook door de ogen van een kleurenblinde
   const paar = [kleuren.groen, kleuren.terra];
   const normaal = afstand(paar[0], paar[1]);
   uitkomsten.push({

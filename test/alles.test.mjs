@@ -17,6 +17,7 @@ import {
   eensgezindheid, stellingstatus, gewichtRangorde, gewichtGemiddelde,
   groepsgewicht, locatiescore, hussel, toevalsreeks,
   verkenningsweging, wegingsverschil, kandidaatoverzicht, leadoverzicht,
+  oordeel, effectVanGrens,
 } from '../src/bereken.mjs';
 import { bouw } from '../src/bouw.mjs';
 import { contrast, afstand } from '../src/controleer.mjs';
@@ -140,20 +141,34 @@ test('een lid dat niets invult laat de groep niet crashen', () => {
 });
 
 test('locatiescore laat onbekende themas buiten de noemer', () => {
-  const themas = [{ code: 'A' }, { code: 'B' }];
   const gewicht = { A: 50, B: 50 };
   // alleen A is bekend en die staat op 4: de score is 100, niet 50
-  const uit = locatiescore({ A: 4, B: null }, gewicht, themas);
+  const uit = locatiescore({ A: 4, B: null }, gewicht, ['A', 'B']);
   bijna(uit.score, 100);
   gelijk(uit.geteld, 1);
 });
 
 test('de band loopt van alles tegen tot alles mee', () => {
-  const themas = [{ code: 'A' }, { code: 'B' }];
   const gewicht = { A: 50, B: 50 };
   const scores = { A: 4, B: null };
-  bijna(locatiescore(scores, gewicht, themas, 0).score, 50);
-  bijna(locatiescore(scores, gewicht, themas, 4).score, 100);
+  bijna(locatiescore(scores, gewicht, ['A', 'B'], 0).score, 50);
+  bijna(locatiescore(scores, gewicht, ['A', 'B'], 4).score, 100);
+});
+
+test('een vastgestelde grens gaat voor op elk cijfer', () => {
+  const plek = { scores: { A: 4, B: 4 }, raakt: ['K7'] };
+  const opties = { vastgesteld: ['K7'], groenVanaf: 65, roodOnder: 45, minimaleDekking: 1 };
+  gelijk(oordeel(plek, { A: 50, B: 50 }, ['A', 'B'], opties).stand, 'afgevallen',
+    'een perfecte score mag een grens niet wegpoetsen');
+  gelijk(oordeel(plek, { A: 50, B: 50 }, ['A', 'B'], { ...opties, vastgesteld: [] }).stand,
+    'voldoet', 'zonder vastgestelde grens telt het cijfer weer gewoon');
+});
+
+test('groen vergt ook genoeg onderzochte themas', () => {
+  const plek = { scores: { A: 4, B: null }, raakt: [] };
+  const opties = { vastgesteld: [], groenVanaf: 65, roodOnder: 45, minimaleDekking: 2 };
+  gelijk(oordeel(plek, { A: 50, B: 50 }, ['A', 'B'], opties).stand, 'deels',
+    'een 100 op een van de twee themas is nog geen groen');
 });
 
 test('husselen is herhaalbaar met dezelfde startwaarde', () => {
@@ -165,7 +180,9 @@ test('husselen is herhaalbaar met dezelfde startwaarde', () => {
 
 /* ============================================================ 3. de bouw */
 
-const uitkomst = bouw({ doel: 'dist/.test-uitvoer.html' });
+// De testbundel schrijft niets naar dist/: de bouw daar is een artefact van
+// `npm run bouw` en moet niet van een testloop veranderen.
+const uitkomst = bouw({ schrijf: false });
 
 test('de bouw levert een volledige pagina op', () => {
   gelijk(uitkomst.html.startsWith('<!DOCTYPE html>'), true);
@@ -234,7 +251,7 @@ test('alle onzekerheidsbanden overlappen elkaar', () => {
 });
 
 test('de andere weegmethode geeft een andere uitkomst maar geen fout', () => {
-  const ander = bouw({ methode: 'gemiddelde', doel: 'dist/.test-gemiddelde.html' });
+  const ander = bouw({ methode: 'gemiddelde', schrijf: false });
   bijna(ander.gewicht.A, 13.6, 0.05);
   gelijk(ander.gewicht.A !== uitkomst.gewicht.A, true);
 });
@@ -247,26 +264,19 @@ test('stellingteksten met aanhalingstekens breken de svg niet', () => {
 
 /* ============================================= 4. de verkenning ernaast */
 
-test('de verkenningsweging telt per spoor op tot honderd', () => {
+test('de verkenningsweging telt op tot honderd', () => {
   const weging = verkenningsweging(uitkomst.inhoud.scoremodel, uitkomst.inhoud.themas);
-  const somA = Object.values(weging).reduce((a, t) => a + t.A, 0);
-  const somB = Object.values(weging).reduce((a, t) => a + t.B, 0);
-  bijna(somA, 100, 0.01, 'spoor A');
-  bijna(somB, 100, 0.01, 'spoor B');
+  bijna(Object.values(weging).reduce((a, punten) => a + punten, 0), 100, 0.01);
 });
 
 test('vier criteria vallen samen op thema F en maken het zwaar', () => {
   const weging = verkenningsweging(uitkomst.inhoud.scoremodel, uitkomst.inhoud.themas);
-  bijna(weging.F.A, 40, 0.01, 'planologie in spoor A');
-  bijna(weging.F.B, 53, 0.01, 'planologie in spoor B');
+  bijna(weging.F, 40, 0.01, 'planologie, bestuur en verwerving samen');
 });
 
 test('de verkenning weegt niets op drie themas die de groep wel weegt', () => {
   const weging = verkenningsweging(uitkomst.inhoud.scoremodel, uitkomst.inhoud.themas);
-  for (const code of ['B', 'C', 'I']) {
-    gelijk(weging[code].A, 0, `thema ${code} in spoor A`);
-    gelijk(weging[code].B, 0, `thema ${code} in spoor B`);
-  }
+  for (const code of ['B', 'C', 'I']) gelijk(weging[code], 0, `thema ${code}`);
   const samen = ['B', 'C', 'I'].reduce((som, code) => som + uitkomst.gewicht[code], 0);
   gelijk(samen > 30, true, 'de groep weegt er samen meer dan dertig punten op');
 });
@@ -276,6 +286,14 @@ test('het grootste wegingsverschil zit op planologie en verwerving', () => {
     uitkomst.inhoud.scoremodel, uitkomst.inhoud.themas, uitkomst.gewicht);
   gelijk(rijen[0].code, 'F');
   bijna(rijen[0].verschil, -33.6, 0.1);
+});
+
+test('elke grens laat zien hoeveel plekken hij wegneemt', () => {
+  gelijk(effectVanGrens(uitkomst.inhoud.locaties, 'K7', []), 6);
+  gelijk(effectVanGrens(uitkomst.inhoud.locaties, 'K2', []), 5);
+  // K2 en K8 raken dezelfde plekken, dus samen nemen ze er niet tien weg maar vijf
+  gelijk(effectVanGrens(uitkomst.inhoud.locaties, 'K8', ['K2']), 0,
+    'K8 voegt niets toe zodra K2 al vaststaat');
 });
 
 test('de kandidaten en de leads zijn compleet ingelezen', () => {
@@ -307,20 +325,53 @@ test('de leads liggen allemaal binnen de gezochte maat', () => {
   gelijk(zones.reduce((som, z) => som + z.aantal, 0), 283);
 });
 
-test('de kaartpagina wordt gebouwd en bevat alle punten', () => {
-  gelijk(uitkomst.kaartHtml.includes('leaflet'), true);
-  gelijk(uitkomst.kaartHtml.includes('AR01'), true);
-  gelijk(uitkomst.kaartHtml.includes('P071'), true);
-  gelijk(uitkomst.kaartHtml.includes('De kaart kon niet laden'), true,
-    'er hoort een terugvalmelding in te zitten voor wie geen internet heeft');
+/* ================================================================ 5. de zeef */
+
+test('de zeef wordt gebouwd en bevat alle plekken en alle grenzen', () => {
+  gelijk(uitkomst.zeefHtml.includes('leaflet'), true);
+  gelijk(uitkomst.zeefHtml.includes('AR01'), true, 'een kandidaat uit de verkenning');
+  gelijk(uitkomst.zeefHtml.includes('P071'), true, 'een perceel-lead');
+  for (const grens of uitkomst.inhoud.grenzen) {
+    gelijk(uitkomst.zeefHtml.includes(`data-grens="${grens.code}"`), true,
+      `grens ${grens.code} heeft geen schakelaar`);
+  }
 });
 
-test('het dashboard verwijst naar de kaart en andersom', () => {
-  gelijk(uitkomst.html.includes('href="kaart.html"'), true);
-  gelijk(uitkomst.kaartHtml.includes('href="index.html"'), true);
+test('de zeef rekent met dezelfde kern als de bouw', () => {
+  // De broncode van kern.mjs wordt letterlijk in de pagina geplakt. Zou dat misgaan,
+  // dan rekent de browser stilletjes anders dan npm test, en dat is het ene ding dat
+  // deze opzet moet uitsluiten.
+  for (const naam of ['function locatiescore', 'function oordeel', 'function effectVanGrens']) {
+    gelijk(uitkomst.zeefHtml.includes(naam), true, `${naam} ontbreekt in de zeef`);
+  }
+  gelijk(/\bexport function locatiescore/.test(uitkomst.zeefHtml), false,
+    'het sleutelwoord export hoort eruit gestript te zijn, anders valt de pagina stil');
 });
 
-/* ======================================================= 5. de kleurleer */
+test('de zeef werkt zonder internet en zegt dat ook', () => {
+  gelijk(uitkomst.zeefHtml.includes('Geen internet'), true,
+    'er hoort een terugvalmelding in te zitten voor wie geen achtergrondkaart krijgt');
+});
+
+test('elke css-variabele die gebruikt wordt is ook gedefinieerd', () => {
+  // Dit is hier eerder misgegaan: de zeef gebruikte een reeks --sp-* die nergens werd
+  // uitgeschreven, waardoor alle binnenruimte stil op nul uitkwam. Een ontbrekende
+  // variabele geeft geen foutmelding in de browser, dus die controle hoort hier.
+  for (const [naam, html] of [['analyse', uitkomst.html], ['zeef', uitkomst.zeefHtml]]) {
+    const stijl = html.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
+    const gedefinieerd = new Set([...stijl.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]));
+    const gebruikt = new Set([...stijl.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]));
+    const missend = [...gebruikt].filter((v) => !gedefinieerd.has(v));
+    gelijk(missend, [], `${naam}: niet gedefinieerd`);
+  }
+});
+
+test('de twee paginas verwijzen naar elkaar', () => {
+  gelijk(uitkomst.html.includes('href="index.html"'), true, 'de analyse naar de zeef');
+  gelijk(uitkomst.zeefHtml.includes('href="analyse.html"'), true, 'de zeef naar de analyse');
+});
+
+/* ========================================================== 6. de kleurleer */
 
 test('contrast van wit op zwart is 21:1', () => {
   bijna(contrast('#ffffff', '#000000'), 21, 0.01);

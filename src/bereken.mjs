@@ -5,7 +5,13 @@
  * bewaard tussen aanroepen door. Daardoor is elke uitspraak in het dashboard na te
  * rekenen met `npm test`, en kan een grafiek nooit stilletjes iets anders berekenen
  * dan de tabel ernaast.
+ *
+ * Het scoren van een plek staat niet hier maar in `kern.mjs`, omdat de zeefpagina die
+ * functies ook in de browser nodig heeft. Zo is er één implementatie in plaats van twee
+ * die uit elkaar kunnen lopen.
  */
+export { locatiescore, oordeel, effectVanGrens, STANDEN } from './kern.mjs';
+import { locatiescore } from './kern.mjs';
 
 /* ------------------------------------------------------------------ toeval */
 
@@ -42,7 +48,7 @@ export function hussel(lijst, volgende) {
  * Gemiddelde antwoordscore per thema, ruw en nog niet geschaald.
  * Omgekeerd gepoolde stellingen tellen gespiegeld: een 3 wordt een 0.
  */
-export function themamiddelen(lid, stellingen, themas) {
+function themamiddelen(lid, stellingen, themas) {
   const som = new Map();
   const telling = new Map();
   stellingen.forEach((stelling, i) => {
@@ -192,46 +198,21 @@ export function themadekking(inhoud) {
   return uit;
 }
 
-/**
- * Gewogen score van 0 tot 100 over de ingevulde thema's.
- *
- * `invulling` bepaalt wat er met een onbekend thema gebeurt:
- *   null      buiten de berekening laten; het gewicht wordt over de rest verdeeld
- *   0 of 4    invullen, om de onder- en bovengrens van de band te krijgen
- *
- * Let op wat de standaardstand betekent: onbekend is hier niet nul en niet gemiddeld,
- * het is weg. Een plek wordt dus beoordeeld op zijn bekende kant. Daarom staat de band
- * altijd naast de score in het dashboard.
- */
-export function locatiescore(scores, gewicht, themas, invulling = null) {
-  let somGewicht = 0;
-  let somScore = 0;
-  let geteld = 0;
-  for (const { code } of themas) {
-    const bekend = scores[code];
-    const cijfer = bekend === null || bekend === undefined ? invulling : bekend;
-    if (cijfer === null) continue;
-    if (bekend !== null && bekend !== undefined) geteld += 1;
-    somGewicht += gewicht[code];
-    somScore += gewicht[code] * (cijfer / 4);
-  }
-  return { score: somGewicht ? (somScore / somGewicht) * 100 : null, geteld };
-}
-
 /** Score, band en geraakte grenzen per plek, gesorteerd van hoog naar laag. */
 export function perLocatie(inhoud, gewicht) {
   const { themas, locaties, instellingen } = inhoud;
+  const codes = themas.map((t) => t.code);
   const vastgesteld = new Set(instellingen['vastgestelde-grenzen'] ?? []);
 
   return locaties
     .map((locatie) => {
-      const midden = locatiescore(locatie.scores, gewicht, themas, null);
+      const midden = locatiescore(locatie.scores, gewicht, codes, null);
       return {
         ...locatie,
         score: midden.score,
         dekking: midden.geteld,
-        ondergrens: locatiescore(locatie.scores, gewicht, themas, 0).score,
-        bovengrens: locatiescore(locatie.scores, gewicht, themas, 4).score,
+        ondergrens: locatiescore(locatie.scores, gewicht, codes, 0).score,
+        bovengrens: locatiescore(locatie.scores, gewicht, codes, 4).score,
         // Alle grenzen die deze plek raakt, en apart welke daarvan zijn vastgesteld.
         raaktGrenzen: locatie.raakt,
         valtAf: locatie.raakt.filter((code) => vastgesteld.has(code)),
@@ -242,12 +223,13 @@ export function perLocatie(inhoud, gewicht) {
 
 /** Per scenario: hoeveel kandidaten blijven over en welke daarvan scoort het hoogst. */
 export function trechter(inhoud, gewicht) {
+  const codes = inhoud.themas.map((t) => t.code);
   const kandidaten = inhoud.locaties.filter((l) => l.soort !== 'archetype');
   return (inhoud.instellingen.scenarios ?? []).map((scenario) => {
     const gesloten = new Set(scenario.grenzen);
     const over = kandidaten.filter((l) => !l.raakt.some((code) => gesloten.has(code)));
     const gescoord = over
-      .map((l) => ({ naam: l.naam, ...locatiescore(l.scores, gewicht, inhoud.themas) }))
+      .map((l) => ({ naam: l.naam, ...locatiescore(l.scores, gewicht, codes) }))
       .filter((l) => l.score !== null)
       .sort((a, b) => b.score - a.score);
     return {
@@ -293,11 +275,8 @@ export function kerncijfers(inhoud, gewicht, stellingen) {
  */
 export function verkenningsweging(scoremodel, themas) {
   const uit = {};
-  for (const { code } of themas) uit[code] = { A: 0, B: 0 };
-  for (const rij of scoremodel) {
-    uit[rij.thema].A += rij.wegingA * 100;
-    uit[rij.thema].B += rij.wegingB * 100;
-  }
+  for (const { code } of themas) uit[code] = 0;
+  for (const rij of scoremodel) uit[rij.thema] += rij.weging * 100;
   return uit;
 }
 
@@ -310,43 +289,31 @@ export function wegingsverschil(scoremodel, themas, groepsgewichten) {
   return themas
     .map((thema) => {
       const groep = groepsgewichten[thema.code];
-      const { A, B } = verkenning[thema.code];
-      // Het verschil meten we tegen het spoor dat het dichtst bij de groep ligt: als de
-      // twee sporen sterk uiteenlopen is dat op zichzelf informatie, geen strafpunt.
-      const dichtstbij = Math.abs(A - groep) <= Math.abs(B - groep) ? A : B;
       return {
         ...thema,
         groep,
-        verkenningA: A,
-        verkenningB: B,
-        verschil: groep - dichtstbij,
+        verkenning: verkenning[thema.code],
+        verschil: groep - verkenning[thema.code],
         criteria: scoremodel.filter((r) => r.thema === thema.code).map((r) => r.criterium),
       };
     })
     .sort((a, b) => Math.abs(b.verschil) - Math.abs(a.verschil));
 }
 
-/** Telling van de kandidaten langs de assen waarop de verkenning ze indeelt. */
+/**
+ * De vier tellingen die de verhouding in de keten laten zien: hoeveel kandidaten er zijn,
+ * hoeveel daarvan woonlocatie zijn, en hoeveel er werkelijk themascores hebben. Dat
+ * laatste getal is het punt: alles wat daarbuiten valt staat wel op de kaart maar telt
+ * nergens in mee, en een kandidaat met hoge prioriteit zonder scores is een gat in het
+ * onderzoek, geen afgevallen plek.
+ */
 export function kandidaatoverzicht(kandidaten) {
-  const tel = (veld) => {
-    const uit = new Map();
-    for (const kandidaat of kandidaten) {
-      uit.set(kandidaat[veld], (uit.get(kandidaat[veld]) ?? 0) + 1);
-    }
-    return [...uit.entries()].map(([waarde, aantal]) => ({ waarde, aantal }));
-  };
-  const woonlocaties = kandidaten.filter((k) => k.categorie === 'kandidaat');
   return {
     totaal: kandidaten.length,
-    woonlocaties: woonlocaties.length,
+    woonlocaties: kandidaten.filter((k) => k.categorie === 'kandidaat').length,
     metThemascores: kandidaten.filter((k) => k.heeftThemascores).length,
     hoogZonderThemascores: kandidaten.filter(
       (k) => k.prioriteit === 'hoog' && !k.heeftThemascores).length,
-    perRegio: tel('regio'),
-    perSpoor: tel('spoor'),
-    perPrioriteit: tel('prioriteit'),
-    perCategorie: tel('categorie'),
-    perVertrouwen: tel('vertrouwen'),
   };
 }
 

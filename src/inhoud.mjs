@@ -184,7 +184,6 @@ export function laadInhoud(wortel) {
     gemeente: rij.gemeente,
     categorie: rij.categorie,
     vertrouwen: rij.vertrouwen,
-    spoor: rij.spoor,
     prioriteit: rij.prioriteit,
     omvang: rij.omvang,
     status: rij.status,
@@ -211,7 +210,6 @@ export function laadInhoud(wortel) {
     hectare: Number(rij['opp (ha)']),
     lat: Number(rij.lat),
     lon: Number(rij.lon),
-    spoor: rij.spoor,
   }));
 
   // --------------------------------------------------------------- scoremodel
@@ -224,26 +222,34 @@ export function laadInhoud(wortel) {
     }
     return {
       criterium: rij.criterium,
-      wegingA: Number(rij['weging A']),
-      wegingB: Number(rij['weging B']),
+      weging: Number(rij.weging),
       thema,
       meten: rij['meten via'] ?? '',
     };
   });
-  for (const [naam, sleutel] of [['A', 'wegingA'], ['B', 'wegingB']]) {
-    const som = scoremodel.reduce((totaal, rij) => totaal + rij[sleutel], 0);
-    if (Math.abs(som - 1) > 0.005) {
-      throw new InhoudFout('inhoud/11-scoremodel.md', 0,
-        `weging ${naam} telt op tot ${som.toFixed(3)} in plaats van 1,000`);
-    }
+  const somWeging = scoremodel.reduce((totaal, rij) => totaal + rij.weging, 0);
+  if (Math.abs(somWeging - 1) > 0.005) {
+    throw new InhoudFout('inhoud/11-scoremodel.md', 0,
+      `de weging telt op tot ${somWeging.toFixed(3)} in plaats van 1,000`);
   }
   const uitsluiters = (scoremodelBestand.tabellen[1] ?? []).map((rij) => ({
     naam: rij.uitsluiter, eis: rij.eis,
   }));
 
   // -------------------------------------------------------------- huisstijl
-  const [lichteKleuren, donkereKleuren, ramp, maten] = huisstijl.tabellen;
+  const [lichteKleuren, donkereKleuren, ramp, maten, ruimte] = huisstijl.tabellen;
   const maatvoering = Object.fromEntries(maten.map((rij) => [rij.sleutel, Number(rij.waarde)]));
+  // Het achtpuntsstramien wordt --sp-1 tot --sp-8. Zonder deze tabel zouden de afstanden
+  // in het stijlblad stil op nul uitkomen, en dat is precies eerder misgegaan.
+  if (!ruimte?.length) {
+    throw new InhoudFout('inhoud/00-huisstijl.md', 0,
+      'de tabel onder "## Ruimte" ontbreekt; zonder die stappen valt alle witruimte weg');
+  }
+  const stramien = ruimte.map((rij) => Number(rij.pixels));
+  if (stramien.some((px) => !Number.isFinite(px))) {
+    throw new InhoudFout('inhoud/00-huisstijl.md', 0,
+      'elke stap in de ruimtetabel heeft een getal in de kolom "pixels" nodig');
+  }
 
   return {
     // De schakelaar staat in 05-antwoorden.md, bij de gegevens waar hij over gaat.
@@ -255,6 +261,7 @@ export function laadInhoud(wortel) {
       donker: kleuren(donkereKleuren, 'inhoud/00-huisstijl.md'),
       ramp: { licht: ramp.map((r) => r.licht), donker: ramp.map((r) => r.donker) },
       maat: maatvoering,
+      stramien,
     },
     instellingen: { ...instellingen.kop, weegmethode, scenarios },
     teksten: { ...teksten.kop, ...teksten.secties },

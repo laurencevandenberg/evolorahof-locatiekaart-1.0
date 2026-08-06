@@ -1,10 +1,17 @@
 #!/usr/bin/env node
 /**
- * Bouwt het dashboard: leest `inhoud/`, rekent, en schrijft `dist/index.html`.
+ * Bouwt twee pagina's uit `inhoud/`.
  *
- *   node src/bouw.mjs                 bouwt met de instellingen uit 01-instellingen.md
- *   node src/bouw.mjs --methode gemiddelde   bouwt eenmalig met de andere weegmethode
- *   node src/bouw.mjs --uit dist/vergelijk.html
+ *   dist/index.html    de zeef: de kaart met de eisen als bediening
+ *   dist/analyse.html  de analyse: wat de groep vindt en wat de verkenning vond
+ *
+ *   node src/bouw.mjs                             met de instellingen uit 01-instellingen.md
+ *   node src/bouw.mjs --methode gemiddelde        eenmalig met de andere weegmethode
+ *   node src/bouw.mjs --uit dist/proef.html       ander pad voor de analysepagina
+ *   node src/bouw.mjs --zeef dist/proef-zeef.html ander pad voor de zeef
+ *
+ * Beide paden staan los van elkaar, zodat een proefbouw met andere instellingen nooit
+ * stilletjes over de vastgestelde bouw in `dist/` heen schrijft.
  *
  * De bouw stopt bij de eerste fout in de inhoud en noemt bestand en regel. Dat is met
  * opzet: een dashboard dat stil doorbouwt met een stelling die nergens bij hoort, is
@@ -29,21 +36,31 @@ import { plekken as plekkenpaneel } from './panelen/plekken.mjs';
 import { wegingen as wegingenpaneel } from './panelen/wegingen.mjs';
 import { kandidaten as kandidatenpaneel } from './panelen/kandidaten.mjs';
 import { leads as leadspaneel } from './panelen/leads.mjs';
-import { bouwKaart } from './kaart.mjs';
+import { bouwZeef } from './zeef.mjs';
 
 const WORTEL = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Leest de vlaggen van de opdrachtregel. */
 function leesArgumenten(argv) {
-  const uit = { methode: null, doel: 'dist/index.html' };
+  const uit = { methode: null, doel: 'dist/analyse.html', zeefDoel: 'dist/index.html' };
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--methode') uit.methode = argv[i + 1];
     if (argv[i] === '--uit') uit.doel = argv[i + 1];
+    if (argv[i] === '--zeef') uit.zeefDoel = argv[i + 1];
   }
   return uit;
 }
 
-export function bouw({ methode = null, doel = 'dist/index.html' } = {}) {
+/**
+ * Bouwt beide pagina's en geeft alles terug wat onderweg is uitgerekend.
+ *
+ * `schrijf: false` rekent en tekent wel, maar raakt de schijf niet. De testbundel roept
+ * deze functie twee keer aan, ook met de andere weegmethode; zou dat naar `dist/`
+ * schrijven, dan zou `npm test` de meegecommitte bouw stilletjes vervangen door een
+ * bouw met andere instellingen. Dat is hier eerder gebeurd.
+ */
+export function bouw({ methode = null, doel = 'dist/analyse.html',
+  zeefDoel = 'dist/index.html', schrijf = true } = {}) {
   const inhoud = laadInhoud(WORTEL);
   const waarschuwingen = [];
 
@@ -96,19 +113,20 @@ export function bouw({ methode = null, doel = 'dist/index.html' } = {}) {
   // ------------------------------------------------------------------ pagina
   const html = bouwPagina({ inhoud, panelen, cijfers, stellingen, css, waarschuwingen });
   const pad = join(WORTEL, doel);
-  mkdirSync(dirname(pad), { recursive: true });
-  writeFileSync(pad, html, 'utf8');
 
-  // De kaart is een tweede pagina, want die heeft internet nodig voor de tegels.
-  // Themascores koppelen we op id, zodat een kandidaat die ook in 07-locaties.md staat
-  // zijn score meekrijgt in de popup.
-  const locatiescores = new Map(
-    locaties.filter((l) => l.score !== null).map((l) => [l.id, l.score]));
-  const kaartHtml = bouwKaart({ inhoud, locatiescores, css });
-  const kaartPad = join(dirname(pad), 'kaart.html');
-  writeFileSync(kaartPad, kaartHtml, 'utf8');
+  // De zeef is de voorpagina: daar zet je de eisen aan en zie je de kaart meebewegen.
+  // Hij rekent in de browser met dezelfde functies uit kern.mjs als deze bouw.
+  const zeefHtml = bouwZeef({ wortel: WORTEL, inhoud, gewicht, css });
+  const zeefPad = join(WORTEL, zeefDoel);
 
-  return { pad, html, kaartPad, kaartHtml, gewicht, stellingen, locaties, scenarios,
+  if (schrijf) {
+    for (const [bestandspad, tekst] of [[pad, html], [zeefPad, zeefHtml]]) {
+      mkdirSync(dirname(bestandspad), { recursive: true });
+      writeFileSync(bestandspad, tekst, 'utf8');
+    }
+  }
+
+  return { pad, html, zeefPad, zeefHtml, gewicht, stellingen, locaties, scenarios,
     cijfers, dekking, verschillen, overzicht, zones, inhoud };
 }
 
@@ -129,7 +147,8 @@ if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import
     console.log(`  perceel-leads    ${uitkomst.inhoud.leads.length}`);
     console.log(`  grootste wegingsverschil  thema ${uitkomst.verschillen[0].code}` +
       `, ${uitkomst.verschillen[0].verschil.toFixed(1)} punten`);
-    console.log(`ook gebouwd: ${uitkomst.kaartPad.split('/').slice(-2).join('/')}`);
+    console.log(`ook gebouwd: ${opties.zeefDoel}, de zeef `
+      + `(${Math.round(uitkomst.zeefHtml.length / 1024)} kB)`);
   } catch (fout) {
     console.error(`\nBouw gestopt.\n  ${fout.message}\n`);
     process.exitCode = 1;

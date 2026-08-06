@@ -28,7 +28,7 @@ export function lettertype(wortel, huisstijl) {
 }
 
 export function bouwStijl(huisstijl, lettertypeCss) {
-  const { licht, donker, ramp, maat } = huisstijl;
+  const { licht, donker, ramp, maat, stramien } = huisstijl;
   const display = huisstijl['display-fallback'];
   const tekstletter = huisstijl['tekst-fallback'];
   const displayStapel = lettertypeCss ? `"Evolorahof Display", ${display}` : display;
@@ -38,6 +38,7 @@ export function bouwStijl(huisstijl, lettertypeCss) {
 ${variabelen(licht, ramp.licht)}
   --paginabreedte: ${maat.paginabreedte}px;
   --hoekstraal: ${maat.hoekstraal}px;
+${stramien.map((px, i) => `  --sp-${i + 1}: ${px}px;`).join('\n')}
   --display: ${displayStapel};
   --tekst: ${tekstletter};
 }

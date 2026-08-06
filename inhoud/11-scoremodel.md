@@ -14,7 +14,7 @@ die samen honderd punten verdeelt.
 > gewicht tussen netcapaciteit en bestuurlijke ontvankelijkheid, en zolang er geen besluit
 > over waterstof ligt, is één weging eerlijker dan een band die suggereert dat we beide
 > kanten al hebben afgewogen. Wil je een tweede profiel terug, voeg dan een kolom toe en
-> breid `verkenningsweging` in `src/bereken.mjs` uit.
+> breid `verkenningsweging` in `src/statistiek.mjs` uit.
 
 Dit is een tweede weging naast die van de groep, en daar zit de reden dat dit bestand
 bestaat. De groep heeft in het stellingenformulier zelf gewogen, over negen thema's. De
@@ -41,7 +41,7 @@ dit bestand los staat van de code.
 
 ## Harde uitsluiters van de verkenning
 
-Deze gelden vóór elke score, net als de grenzen in `06-knock-outs.md`. Ze staan hier ter
+Deze gelden vóór elke score, net als de knock-outcriteria in `07-knock-outs.md`. Ze staan hier ter
 vergelijking; ze worden niet automatisch toegepast.
 
 | uitsluiter | eis |

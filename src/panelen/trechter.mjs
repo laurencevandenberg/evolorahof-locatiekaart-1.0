@@ -1,5 +1,6 @@
 /**
- * De trechter: hoeveel plekken blijven over per scenario van vastgestelde grenzen.
+ * De trechter: hoeveel plekken blijven over per scenario van vastgestelde
+ * knock-outcriteria.
  *
  * De scenario's staan in `inhoud/01-instellingen.md` en zijn dus zonder code te
  * wijzigen. De volgorde in die tabel is de volgorde hier: bovenaan de ruimste stand,
@@ -41,9 +42,11 @@ export function trechter(scenarios, { breedte = 600 } = {}) {
         { x: X, y: y + 36, 'font-size': 11.5, fill: 'var(--flauw)' }));
     }
 
-    const grenzen = scenario.grenzen.length ? scenario.grenzen.join(', ') : 'geen';
+    const vastgesteld = scenario.namen.length
+      ? scenario.namen.map((naam) => `· ${naam}`).join('<br>')
+      : '· geen enkel criterium';
     delen.push(trefvlak(0, y - 18, breedte, REGEL - 4,
-      `<b>${scenario.naam}</b><br>grenzen: ${grenzen}<br>` +
+      `<b>${scenario.naam}</b><br>vastgesteld:<br>${vastgesteld}<br>` +
       `${scenario.over} plekken blijven over` +
       (scenario.beste ? `<br>hoogste score: ${scenario.beste} (${scenario.bestescore})` : '')));
   });

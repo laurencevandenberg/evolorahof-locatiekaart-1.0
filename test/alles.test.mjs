@@ -13,12 +13,12 @@
  */
 import { test, gelijk, bijna, gooit, rapport } from './loop.mjs';
 import { leesMarkdown, naarHtml, escapeHtml } from '../src/markdown.mjs';
+import { locatiescore, oordeel, effectVanKnockout } from '../src/kern.mjs';
 import {
   eensgezindheid, stellingstatus, gewichtRangorde, gewichtGemiddelde,
-  groepsgewicht, locatiescore, hussel, toevalsreeks,
+  groepsgewicht, hussel, toevalsreeks, perPlek,
   verkenningsweging, wegingsverschil, kandidaatoverzicht, leadoverzicht,
-  oordeel, effectVanGrens,
-} from '../src/bereken.mjs';
+} from '../src/statistiek.mjs';
 import { bouw } from '../src/bouw.mjs';
 import { contrast, afstand } from '../src/controleer.mjs';
 
@@ -190,11 +190,14 @@ test('de bouw levert een volledige pagina op', () => {
   gelijk(uitkomst.html.length > 40000, true, 'de pagina lijkt verdacht kort');
 });
 
-test('alle vijf de panelen staan erin', () => {
+test('alle grafiekpanelen staan erin', () => {
+  // Het vroegere paneel "score en onzekerheidsband per plek" is bewust weg: de lijst
+  // in de zeef toont precies dat, maar dan live. Wat hier staat is de rest.
   for (const label of [
     'eensgezindheid per stelling', 'gewicht per thema tegenover dekking',
     'aantal plekken dat overblijft per scenario', 'hoe vaak een stelling in een top vijf staat',
-    'score en onzekerheidsband per plek',
+    'weging van de groep tegenover die van de verkenning',
+    'de kandidaten uit de verkenning per regio',
   ]) {
     gelijk(uitkomst.html.includes(label), true, `paneel ontbreekt: ${label}`);
   }
@@ -243,7 +246,7 @@ test('de trechter loopt van twaalf naar drie', () => {
 });
 
 test('alle onzekerheidsbanden overlappen elkaar', () => {
-  const gescoord = uitkomst.locaties.filter((l) => l.score !== null);
+  const gescoord = perPlek(uitkomst.inhoud, uitkomst.gewicht).filter((l) => l.score !== null);
   const hoogsteOndergrens = Math.max(...gescoord.map((l) => l.ondergrens));
   const laagsteBovengrens = Math.min(...gescoord.map((l) => l.bovengrens));
   gelijk(hoogsteOndergrens < laagsteBovengrens, true,
@@ -288,11 +291,11 @@ test('het grootste wegingsverschil zit op planologie en verwerving', () => {
   bijna(rijen[0].verschil, -33.6, 0.1);
 });
 
-test('elke grens laat zien hoeveel plekken hij wegneemt', () => {
-  gelijk(effectVanGrens(uitkomst.inhoud.locaties, 'K7', []), 6);
-  gelijk(effectVanGrens(uitkomst.inhoud.locaties, 'K2', []), 5);
+test('elk knock-outcriterium laat zien hoeveel plekken het wegneemt', () => {
+  gelijk(effectVanKnockout(uitkomst.inhoud.themascores, 'K7', []), 6);
+  gelijk(effectVanKnockout(uitkomst.inhoud.themascores, 'K2', []), 5);
   // K2 en K8 raken dezelfde plekken, dus samen nemen ze er niet tien weg maar vijf
-  gelijk(effectVanGrens(uitkomst.inhoud.locaties, 'K8', ['K2']), 0,
+  gelijk(effectVanKnockout(uitkomst.inhoud.themascores, 'K8', ['K2']), 0,
     'K8 voegt niets toe zodra K2 al vaststaat');
 });
 
@@ -325,15 +328,27 @@ test('de leads liggen allemaal binnen de gezochte maat', () => {
   gelijk(zones.reduce((som, z) => som + z.aantal, 0), 283);
 });
 
-/* ================================================================ 5. de zeef */
+/* =============================================================== 5. de pagina */
 
-test('de zeef wordt gebouwd en bevat alle plekken en alle grenzen', () => {
-  gelijk(uitkomst.zeefHtml.includes('leaflet'), true);
-  gelijk(uitkomst.zeefHtml.includes('AR01'), true, 'een kandidaat uit de verkenning');
-  gelijk(uitkomst.zeefHtml.includes('P071'), true, 'een perceel-lead');
-  for (const grens of uitkomst.inhoud.grenzen) {
-    gelijk(uitkomst.zeefHtml.includes(`data-grens="${grens.code}"`), true,
-      `grens ${grens.code} heeft geen schakelaar`);
+/**
+ * De zichtbare tekst van de pagina: alles buiten script en stijl, zonder tags, plus
+ * de tooltipteksten (data-tip), want die krijgt de lezer ook te zien.
+ */
+function zichtbareTekst(html) {
+  const tips = [...html.matchAll(/data-tip="([^"]*)"/g)].map((m) => m[1]).join(' ');
+  const zonderBlokken = html
+    .replace(/<script[\s\S]*?<\/script>/g, ' ')
+    .replace(/<style[\s\S]*?<\/style>/g, ' ');
+  return zonderBlokken.replace(/<[^>]+>/g, ' ') + ' ' + tips.replace(/<[^>]+>/g, ' ');
+}
+
+test('de pagina bevat de zeef met alle plekken en alle knock-outcriteria', () => {
+  gelijk(uitkomst.html.includes('leaflet'), true);
+  gelijk(uitkomst.html.includes('AR01'), true, 'een kandidaat uit de verkenning');
+  gelijk(uitkomst.html.includes('P071'), true, 'een perceel-lead');
+  for (const knockout of uitkomst.inhoud.knockouts) {
+    gelijk(uitkomst.html.includes(`data-knockout="${knockout.code}"`), true,
+      `criterium ${knockout.code} heeft geen schakelaar`);
   }
 });
 
@@ -341,34 +356,64 @@ test('de zeef rekent met dezelfde kern als de bouw', () => {
   // De broncode van kern.mjs wordt letterlijk in de pagina geplakt. Zou dat misgaan,
   // dan rekent de browser stilletjes anders dan npm test, en dat is het ene ding dat
   // deze opzet moet uitsluiten.
-  for (const naam of ['function locatiescore', 'function oordeel', 'function effectVanGrens']) {
-    gelijk(uitkomst.zeefHtml.includes(naam), true, `${naam} ontbreekt in de zeef`);
+  for (const naam of ['function locatiescore', 'function oordeel',
+    'function effectVanKnockout']) {
+    gelijk(uitkomst.html.includes(naam), true, `${naam} ontbreekt in de pagina`);
   }
-  gelijk(/\bexport function locatiescore/.test(uitkomst.zeefHtml), false,
+  gelijk(/\bexport function locatiescore/.test(uitkomst.html), false,
     'het sleutelwoord export hoort eruit gestript te zijn, anders valt de pagina stil');
 });
 
 test('de zeef werkt zonder internet en zegt dat ook', () => {
-  gelijk(uitkomst.zeefHtml.includes('Geen internet'), true,
+  gelijk(uitkomst.html.includes('Geen internet'), true,
     'er hoort een terugvalmelding in te zitten voor wie geen achtergrondkaart krijgt');
+});
+
+test('alle secties staan op de pagina en de navigatie wijst ernaar', () => {
+  for (const anker of ['zeef', 'vraag', 'aanbod', 'agenda', 'begrippen', 'verantwoording']) {
+    gelijk(uitkomst.html.includes(`id="${anker}"`), true, `sectie ${anker} ontbreekt`);
+    gelijk(uitkomst.html.includes(`href="#${anker}"`), true, `navigatie naar ${anker} ontbreekt`);
+  }
+});
+
+test('er komt geen kale code in beeld', () => {
+  // De afspraak uit de LEESMIJ: codes zijn adressen voor in de bestanden, de pagina
+  // toont volledige namen. Deze test leest wat een bezoeker werkelijk te zien krijgt,
+  // inclusief de tooltips, en zakt zodra ergens K1 of "spoor A" opduikt.
+  const tekst = zichtbareTekst(uitkomst.html);
+  gelijk(/\bK[1-8]\b/.test(tekst), false, 'ergens staat een kale knock-outcode in beeld');
+  gelijk(/\bspoor [AB]\b/.test(tekst), false, 'de geschrapte sporen duiken weer op');
+});
+
+test('elk vraagteken verwijst naar een bestaand begrip', () => {
+  const verwijzingen = [...uitkomst.html.matchAll(/data-begrip="([a-z-]+)"/g)]
+    .map((m) => m[1]);
+  gelijk(verwijzingen.length > 10, true, 'er horen ruim tien vraagtekens op de pagina');
+  for (const sleutel of new Set(verwijzingen)) {
+    gelijk(uitkomst.html.includes(`id="begrip-${sleutel}"`), true,
+      `vraagteken verwijst naar "${sleutel}", maar dat staat niet in de begrippenlijst`);
+  }
+});
+
+test('elk begrip wordt ergens op de pagina gebruikt', () => {
+  // Andersom: een begrip dat nergens een vraagteken heeft, is dood gewicht in
+  // 03-begrippen.md. Liever nu een zakkende test dan een lijst die stil veroudert.
+  const gebruikt = new Set([...uitkomst.html.matchAll(/data-begrip="([a-z-]+)"/g)]
+    .map((m) => m[1]));
+  for (const begrip of uitkomst.inhoud.begrippen) {
+    gelijk(gebruikt.has(begrip.sleutel), true,
+      `begrip "${begrip.sleutel}" heeft nergens een vraagteken`);
+  }
 });
 
 test('elke css-variabele die gebruikt wordt is ook gedefinieerd', () => {
   // Dit is hier eerder misgegaan: de zeef gebruikte een reeks --sp-* die nergens werd
   // uitgeschreven, waardoor alle binnenruimte stil op nul uitkwam. Een ontbrekende
   // variabele geeft geen foutmelding in de browser, dus die controle hoort hier.
-  for (const [naam, html] of [['analyse', uitkomst.html], ['zeef', uitkomst.zeefHtml]]) {
-    const stijl = html.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
-    const gedefinieerd = new Set([...stijl.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]));
-    const gebruikt = new Set([...stijl.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]));
-    const missend = [...gebruikt].filter((v) => !gedefinieerd.has(v));
-    gelijk(missend, [], `${naam}: niet gedefinieerd`);
-  }
-});
-
-test('de twee paginas verwijzen naar elkaar', () => {
-  gelijk(uitkomst.html.includes('href="index.html"'), true, 'de analyse naar de zeef');
-  gelijk(uitkomst.zeefHtml.includes('href="analyse.html"'), true, 'de zeef naar de analyse');
+  const stijl = uitkomst.html.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
+  const gedefinieerd = new Set([...stijl.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]));
+  const gebruikt = new Set([...stijl.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]));
+  gelijk([...gebruikt].filter((v) => !gedefinieerd.has(v)), []);
 });
 
 /* ========================================================== 6. de kleurleer */
@@ -381,4 +426,4 @@ test('afstand tussen dezelfde kleur is nul', () => {
   bijna(afstand('#b0463c', '#b0463c'), 0);
 });
 
-rapport('Evolorahof locatiekaart, tests');
+rapport('De locatiezeef, tests');

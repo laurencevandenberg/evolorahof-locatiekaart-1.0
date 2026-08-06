@@ -35,7 +35,7 @@ export function themas(rijen, { breedte, aantalPlekken }) {
     const kleur = leeg ? 'var(--terra)' : dun ? 'var(--ramp2)' : 'var(--ramp4)';
     const lengte = (rij.gewicht / maxGewicht) * BALK;
 
-    delen.push(tekst(`${rij.code} · ${rij.naam}`,
+    delen.push(tekst(rij.naam,
       { x: X_NAAM - 12, y: y + 5, 'text-anchor': 'end', 'font-size': 13, fill: 'var(--inkt)' }));
     delen.push(balk(X_NAAM, y - 8, lengte, 16, kleur));
     delen.push(tekst(getal(rij.gewicht),
@@ -55,7 +55,7 @@ export function themas(rijen, { breedte, aantalPlekken }) {
       ? 'bij geen enkele plek ingevuld: dit gewicht verdwijnt volledig uit de berekening'
       : `ingevuld bij ${rij.dekking} van de ${aantalPlekken} gescoorde plekken`;
     delen.push(trefvlak(0, y - REGEL / 2 + 4, breedte, REGEL - 6,
-      `<b>${rij.code} · ${rij.naam}</b><br>gewicht ${getal(rij.gewicht)} van 100<br>${uitleg}`));
+      `<b>${rij.naam}</b><br>gewicht ${getal(rij.gewicht)} van 100<br>${uitleg}`));
   });
 
   return doek(breedte, hoogte, 'gewicht per thema tegenover dekking', delen.join(''));

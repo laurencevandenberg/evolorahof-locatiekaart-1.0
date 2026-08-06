@@ -1,13 +1,15 @@
 {
-  "name": "evolorahof-locatiekaart",
-  "version": "1.0.0",
-  "description": "Dashboard bij het Programma van Eisen 2.0 van Evolorahof: wat de groep breed draagt, wat er net overheen komt, en waar zij in tweeen ligt.",
+  "name": "evolorahof-locatiezeef",
+  "version": "2.0.0",
+  "description": "De locatiezeef van Evolorahof: welke plekken passen bij wat wij vragen, en hoe zeker weten we dat. Een zelfstandige pagina, gebouwd uit Markdown-bestanden.",
   "type": "module",
   "private": true,
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "bouw": "node src/bouw.mjs",
-    "vergelijk": "node src/bouw.mjs --methode gemiddelde --uit dist/gemiddelde.html --zeef dist/gemiddelde-zeef.html",
+    "vergelijk": "node src/bouw.mjs --methode gemiddelde --uit dist/vergelijk.html",
     "controleer": "node src/controleer.mjs",
     "test": "node test/alles.test.mjs",
     "alles": "npm run controleer && npm test && npm run bouw"

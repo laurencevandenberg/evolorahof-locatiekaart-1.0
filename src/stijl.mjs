@@ -70,8 +70,6 @@ h2 {
   text-transform: lowercase; margin: 0 0 4px;
 }
 .sub { color: var(--gedempt); margin: 0 0 8px; max-width: 660px; }
-.uitleg { font-size: 13px; color: var(--gedempt); margin: 0 0 16px; max-width: 800px; }
-.uitleg b { color: var(--inkt); }
 
 /* --------------------------------------------------------------------- vlakken */
 .paneel {

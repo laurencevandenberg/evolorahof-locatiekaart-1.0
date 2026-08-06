@@ -130,7 +130,7 @@ export function ladder(stellingen, { breedte, regelhoogte, teksten }) {
 /** De tooltiptekst; html is toegestaan omdat de tooltip als html wordt gezet. */
 function tooltip(rij, teksten) {
   const regels = [
-    `<b>Stelling ${rij.nr}</b> · thema ${rij.thema}`,
+    `<b>Stelling ${rij.nr}</b> · ${rij.themanaam}`,
     rij.tekst,
     '',
     `eensgezindheid <b>${Math.round(rij.eensgezindheid * 100)}%</b>` +

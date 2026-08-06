@@ -59,12 +59,13 @@ export function laadInhoud(wortel) {
   const huisstijl = bestand(wortel, '00-huisstijl.md');
   const instellingen = bestand(wortel, '01-instellingen.md');
   const teksten = bestand(wortel, '02-teksten.md');
-  const themasBestand = bestand(wortel, '03-themas.md');
-  const stellingenBestand = bestand(wortel, '04-stellingen.md');
-  const antwoordenBestand = bestand(wortel, '05-antwoorden.md');
-  const grenzenBestand = bestand(wortel, '06-knock-outs.md');
-  const locatiesBestand = bestand(wortel, '07-locaties.md');
-  const verantwoording = bestand(wortel, '08-verantwoording.md');
+  const begrippenBestand = bestand(wortel, '03-begrippen.md');
+  const themasBestand = bestand(wortel, '04-themas.md');
+  const stellingenBestand = bestand(wortel, '05-stellingen.md');
+  const antwoordenBestand = bestand(wortel, '06-antwoorden.md');
+  const knockoutsBestand = bestand(wortel, '07-knock-outs.md');
+  const themascoresBestand = bestand(wortel, '08-themascores.md');
+  const verantwoording = bestand(wortel, '12-verantwoording.md');
   const kandidatenBestand = bestand(wortel, '09-kandidaten.md');
   const leadsBestand = bestand(wortel, '10-perceel-leads.md');
   const scoremodelBestand = bestand(wortel, '11-scoremodel.md');
@@ -78,8 +79,8 @@ export function laadInhoud(wortel) {
   // ------------------------------------------------------------- stellingen
   const stellingen = stellingenBestand.tabellen[0].map((rij) => {
     if (!themacodes.has(rij.thema)) {
-      throw new InhoudFout('inhoud/04-stellingen.md', 0,
-        `stelling ${rij.nr} verwijst naar thema "${rij.thema}", dat niet in 03-themas.md staat`);
+      throw new InhoudFout('inhoud/05-stellingen.md', 0,
+        `stelling ${rij.nr} verwijst naar thema "${rij.thema}", dat niet in 04-themas.md staat`);
     }
     return {
       nr: Number(rij.nr), thema: rij.thema, tekst: rij.tekst,
@@ -88,7 +89,7 @@ export function laadInhoud(wortel) {
   });
   stellingen.forEach((s, i) => {
     if (s.nr !== i + 1) {
-      throw new InhoudFout('inhoud/04-stellingen.md', 0,
+      throw new InhoudFout('inhoud/05-stellingen.md', 0,
         `de nummers moeten oplopen vanaf 1; regel ${i + 1} heeft nummer ${s.nr}`);
     }
   });
@@ -100,50 +101,77 @@ export function laadInhoud(wortel) {
     const topvijf = lijst(rij['top vijf']).map(Number);
     for (const nr of topvijf) {
       if (!Number.isInteger(nr) || nr < 1 || nr > stellingen.length) {
-        throw new InhoudFout('inhoud/05-antwoorden.md', 0,
+        throw new InhoudFout('inhoud/06-antwoorden.md', 0,
           `${rij.naam} heeft ${nr} in de top vijf; dat is geen stellingnummer`);
       }
     }
     if (new Set(topvijf).size !== topvijf.length) {
-      throw new InhoudFout('inhoud/05-antwoorden.md', 0,
+      throw new InhoudFout('inhoud/06-antwoorden.md', 0,
         `${rij.naam} heeft een nummer dubbel in de top vijf`);
     }
     return {
       naam: rij.naam,
-      antwoorden: leesReeks(rij.antwoorden, stellingen.length, rij.naam, 'inhoud/05-antwoorden.md'),
+      antwoorden: leesReeks(rij.antwoorden, stellingen.length, rij.naam, 'inhoud/06-antwoorden.md'),
       topvijf,
       opmerking: opmerkingen[rij.naam] ?? '',
     };
   });
   if (leden.length === 0) {
-    throw new InhoudFout('inhoud/05-antwoorden.md', 0, 'er staat geen enkel lid in de tabel');
+    throw new InhoudFout('inhoud/06-antwoorden.md', 0, 'er staat geen enkel lid in de tabel');
   }
 
-  // ----------------------------------------------------------------- grenzen
-  const grenzen = grenzenBestand.tabellen[0].map((rij) => ({
-    code: rij.code, naam: rij.grens, status: rij.status,
-    drempel: rij.drempel, herstel: rij['te repareren'], bron: rij.bron,
-  }));
-  const grenscodes = new Set(grenzen.map((g) => g.code));
+  // ---------------------------------------------------------------- begrippen
+  // De begrippenlijst is het woordenboek achter elk (?)-vraagteken op de pagina. De
+  // sleutel is het adres waarmee de code ernaar verwijst; verwijst de code naar een
+  // sleutel die hier niet staat, dan stopt de bouw daar met een duidelijke melding.
+  const begrippen = begrippenBestand.tabellen[0].map((rij) => {
+    for (const veld of ['sleutel', 'begrip', 'uitleg']) {
+      if (!(rij[veld] ?? '').trim()) {
+        throw new InhoudFout('inhoud/03-begrippen.md', 0,
+          `de rij "${rij.sleutel || rij.begrip || '?'}" mist de kolom "${veld}"`);
+      }
+    }
+    return { sleutel: rij.sleutel, begrip: rij.begrip, uitleg: rij.uitleg };
+  });
+  const dubbeleSleutels = begrippen.map((b) => b.sleutel)
+    .filter((sleutel, i, alle) => alle.indexOf(sleutel) !== i);
+  if (dubbeleSleutels.length) {
+    throw new InhoudFout('inhoud/03-begrippen.md', 0,
+      `dubbele sleutels: ${[...new Set(dubbeleSleutels)].join(', ')}`);
+  }
 
-  // ---------------------------------------------------------------- locaties
-  const locaties = locatiesBestand.tabellen[0].map((rij) => {
+  // ------------------------------------------------------ knock-outcriteria
+  // `nummer` is de code zonder de K: op de pagina heet K3 voluit
+  // "knock-outcriterium 3", de kale code komt daar nooit in beeld.
+  const knockouts = knockoutsBestand.tabellen[0].map((rij) => ({
+    code: rij.code,
+    nummer: rij.code.replace(/^K/, ''),
+    naam: rij.criterium,
+    status: rij.status,
+    drempel: rij.drempel,
+    herstel: rij['te repareren'],
+    bron: rij.bron,
+  }));
+  const knockoutcodes = new Set(knockouts.map((k) => k.code));
+
+  // ------------------------------------------------------------- themascores
+  const themascores = themascoresBestand.tabellen[0].map((rij) => {
     const scores = {};
     for (const { code } of themas) {
       const cel = (rij[code] ?? '').trim();
       if (cel === '') { scores[code] = null; continue; }
       const cijfer = Number(cel);
       if (!Number.isInteger(cijfer) || cijfer < 0 || cijfer > 4) {
-        throw new InhoudFout('inhoud/07-locaties.md', 0,
+        throw new InhoudFout('inhoud/08-themascores.md', 0,
           `${rij.id}, thema ${code}: "${cel}" is geen cijfer van 0 tot 4`);
       }
       scores[code] = cijfer;
     }
     const raakt = lijst(rij.raakt);
     for (const code of raakt) {
-      if (!grenscodes.has(code)) {
-        throw new InhoudFout('inhoud/07-locaties.md', 0,
-          `${rij.id} raakt "${code}", dat niet in 06-knock-outs.md staat`);
+      if (!knockoutcodes.has(code)) {
+        throw new InhoudFout('inhoud/08-themascores.md', 0,
+          `${rij.id} raakt "${code}", dat niet in 07-knock-outs.md staat`);
       }
     }
     return {
@@ -151,16 +179,17 @@ export function laadInhoud(wortel) {
       naam: rij.naam, detail: rij.detail ?? '', scores, raakt,
     };
   });
-  const dubbel = locaties.map((l) => l.id).filter((id, i, a) => a.indexOf(id) !== i);
+  const dubbel = themascores.map((l) => l.id).filter((id, i, a) => a.indexOf(id) !== i);
   if (dubbel.length) {
-    throw new InhoudFout('inhoud/07-locaties.md', 0, `dubbele id's: ${[...new Set(dubbel)].join(', ')}`);
+    throw new InhoudFout('inhoud/08-themascores.md', 0,
+      `dubbele id's: ${[...new Set(dubbel)].join(', ')}`);
   }
 
   // ------------------------------------------------------------ instellingen
-  for (const code of instellingen.kop['vastgestelde-grenzen'] ?? []) {
-    if (!grenscodes.has(code)) {
+  for (const code of instellingen.kop['vastgestelde-knock-outs'] ?? []) {
+    if (!knockoutcodes.has(code)) {
       throw new InhoudFout('inhoud/01-instellingen.md', 0,
-        `vastgestelde-grenzen bevat "${code}", dat niet in 06-knock-outs.md staat`);
+        `vastgestelde-knock-outs bevat "${code}", dat niet in 07-knock-outs.md staat`);
     }
   }
   const weegmethode = instellingen.kop.weegmethode ?? 'rangorde';
@@ -168,15 +197,22 @@ export function laadInhoud(wortel) {
     throw new InhoudFout('inhoud/01-instellingen.md', 0,
       `weegmethode is "${weegmethode}"; kies "rangorde" of "gemiddelde"`);
   }
-  const scenarios = (instellingen.tabellen[0] ?? []).map((rij) => ({
-    naam: rij.naam, grenzen: lijst(rij.grenzen), toelichting: rij.toelichting ?? '',
-  }));
+  const scenarios = (instellingen.tabellen[0] ?? []).map((rij) => {
+    const codes = lijst(rij['knock-outs']);
+    for (const code of codes) {
+      if (!knockoutcodes.has(code)) {
+        throw new InhoudFout('inhoud/01-instellingen.md', 0,
+          `scenario "${rij.naam}" noemt "${code}", dat niet in 07-knock-outs.md staat`);
+      }
+    }
+    return { naam: rij.naam, codes, toelichting: rij.toelichting ?? '' };
+  });
 
   // -------------------------------------------------- kandidaten uit de verkenning
   // Een kandidaat mag dezelfde id hebben als een plek in 07-locaties.md. Zo ja, dan
   // heeft hij ook themascores; zo niet, dan staat hij wel op de kaart maar telt hij
   // nergens in mee. Dat verschil zichtbaar maken is een van de doelen van dit bestand.
-  const gescoordeIds = new Set(locaties.map((l) => l.id));
+  const gescoordeIds = new Set(themascores.map((l) => l.id));
   const kandidaten = kandidatenBestand.tabellen[0].map((rij) => ({
     id: rij.id,
     regio: rij.regio,
@@ -266,7 +302,7 @@ export function laadInhoud(wortel) {
     instellingen: { ...instellingen.kop, weegmethode, scenarios },
     teksten: { ...teksten.kop, ...teksten.secties },
     verantwoording: verantwoording.secties,
-    themas, stellingen, leden, grenzen, locaties,
+    themas, stellingen, leden, begrippen, knockouts, themascores,
     kandidaten, leads, scoremodel, uitsluiters,
     verkenning: { ...kandidatenBestand.kop, scoremodelbron: scoremodelBestand.kop.bron },
   };

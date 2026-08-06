@@ -1,265 +1,209 @@
-# Evolorahof locatiekaart 1.0
+# De locatiezeef
 
-Twee pagina's.
+Eén instrument dat één vraag beantwoordt: **welke plekken passen bij wat wij vragen, en
+hoe zeker weten we dat?**
 
-**`dist/index.html` is de zeef.** De kaart staat centraal en onze eisen zijn de
-bediening ernaast: zet een grens vast en de plekken die hem raken vallen ter plekke af,
-schuif een gewicht op en de kleuren verschuiven mee. Dit is de opvolger van de knop "wat
-doen onze eisen?" uit de oorspronkelijke rekentool, maar dan zonder knop: het antwoord
-staat er al terwijl je nog aan het schuiven bent.
+Het instrument heeft drie lagen.
 
-**`dist/analyse.html` is de analyse.** Wat de groep breed draagt, wat er net overheen
-komt en waar zij in tweeën ligt, op basis van de acht ingevulde stellingenformulieren
-van 26 juli 2026. Daarnaast wat de brede locatieverkenning van 16 juli 2026 opleverde:
-48 benoemde kandidaten en 283 perceel-leads in de regio's Arnhem, Apeldoorn en
-'s-Hertogenbosch. En de plek waar de twee elkaar raken: de verkenning weegt óók, over
-negen eigen criteria, en vertaald naar dezelfde negen thema's blijkt dat de twee
-modellen het grondig oneens zijn over wat ertoe doet.
+1. **De vraag.** Wat wij nooit accepteren (acht knock-outcriteria) en wat wij zwaarder
+   laten tellen (een weging over negen thema's), opgehaald met de acht ingevulde
+   stellingenformulieren van 26 juli 2026.
+2. **Het aanbod.** Wat er is: 48 benoemde kandidaten en 283 perceel-leads uit de brede
+   locatieverkenning van 16 juli 2026, waarvan twaalf plekken themascores hebben, plus
+   drie archetypen als ijkpunt.
+3. **De zeef.** De vraag op het aanbod gelegd. Eerst vallen plekken af op de
+   vastgestelde knock-outcriteria, dan pas telt het gewogen cijfer, en elk cijfer
+   draagt een onzekerheidsband, want bijna de helft van ons gewicht valt op thema's die
+   nog niet zijn onderzocht.
 
-De zeef is om mee te werken, de analyse is om te lezen. Ze verwijzen naar elkaar en ze
-rekenen met dezelfde functies uit `src/kern.mjs`; die broncode wordt letterlijk in de
-zeefpagina geplakt, zodat de kaart en de analyse nooit uiteen kunnen lopen.
+Daaromheen ligt één onderbouwingslaag: waar de eisen vandaan komen (hoe eensgezind de
+groep per stelling is), wat we van het aanbod nog níet weten (de onderzoeksagenda), en
+de verantwoording van de methode.
 
-De kern van het ontwerp: **alles wat je zonder programmeren wilt kunnen veranderen,
-staat in `inhoud/` als Markdown.** Kleuren, teksten, stellingen, antwoorden, grenzen,
-plekken en drempelwaarden zijn allemaal gewone tabellen die je op GitHub kunt lezen en
-bewerken. De code in `src/` rekent en tekent, en bevat geen enkel getal dat over
-Evolorahof gaat.
+Dat alles is **één pagina**: `dist/index.html`. De zeef staat bovenaan en is
+interactief; alles daaronder is het bewijsmateriaal, in leesvolgorde. De pagina is
+zelfstandig, werkt zonder internet (alleen de achtergrondkaart komt van buiten; zonder
+verbinding tekent de zeef dezelfde punten zelf) en is dus geschikt voor een beamer in
+een zaal zonder wifi.
 
 ```
-npm run bouw          bouwt dist/index.html en dist/analyse.html
-npm test              rekent alle uitspraken na
+npm run bouw          bouwt dist/index.html
+npm test              rekent alle uitspraken na (50 tests)
 npm run controleer    toetst de kleuren op contrast en kleurenblindheid
 npm run alles         alle drie achter elkaar
-npm run vergelijk     bouwt er een tweede stel met de andere weegmethode naast
+npm run vergelijk     bouwt dist/vergelijk.html met de andere weegmethode
 ```
 
 Er zijn geen afhankelijkheden. Node 18 of nieuwer is genoeg; `npm install` is niet
-nodig. Open daarna `dist/index.html` in een browser.
-
-Beide pagina's werken zonder internet. De zeef gebruikt de achtergrondkaart van
-OpenStreetMap als die er is, en tekent anders dezelfde punten zelf, met een melding
-erbij. De onderlinge ligging klopt dan nog steeds en alle bediening blijft werken, dus
-een zaal zonder wifi is geen probleem.
+nodig.
 
 ---
 
-## Wat je waar aanpast
+## Alles wat je wilt veranderen, staat in `inhoud/`
 
-| Wil je dit veranderen | Bewerk dit bestand |
-|---|---|
-| kleuren, lettertype, maatvoering | `inhoud/00-huisstijl.md` |
-| weegmethode, vastgestelde grenzen, drempels, scenario's | `inhoud/01-instellingen.md` |
-| elke zichtbare zin op de pagina | `inhoud/02-teksten.md` |
-| de negen thema's | `inhoud/03-themas.md` |
-| de dertig stellingen | `inhoud/04-stellingen.md` |
-| wie wat heeft ingevuld | `inhoud/05-antwoorden.md` |
-| de grenzen met hun drempel en bron | `inhoud/06-knock-outs.md` |
-| de plekken en hun themascores | `inhoud/07-locaties.md` |
-| de verantwoording onderaan | `inhoud/08-verantwoording.md` |
-| de 48 kandidaten uit de verkenning | `inhoud/09-kandidaten.md` |
-| de 283 perceel-leads | `inhoud/10-perceel-leads.md` |
-| de criteria en wegingen van de verkenning | `inhoud/11-scoremodel.md` |
+Dit is de kern van het ontwerp: **de code in `src/` rekent en tekent, en bevat geen
+enkel getal, geen enkele zin en geen enkele kleur die over Evolorahof gaat.** Alles wat
+je zonder programmeren wilt kunnen veranderen, staat in `inhoud/` als gewone
+Markdown-bestanden, leesbaar en bewerkbaar op GitHub, geschikt voor mensen én voor een
+taalmodel dat namens iemand meewerkt.
 
-De huisstijl levert ook het achtpuntsstramien (`--sp-1` tot `--sp-8`) waar alle
-witruimte uit komt, en de kleuren van de kaartstippen. Er staat dus geen kleur- of
-maatwaarde in de code.
+| nummers | rol | wat erin staat |
+|---------|-----|----------------|
+| 00 – 03 | hoe de pagina eruitziet en praat | huisstijl, instellingen, alle teksten, de begrippenlijst |
+| 04 – 07 | wat wij vragen | thema's, stellingen, ingevulde antwoorden, knock-outcriteria |
+| 08 – 11 | wat er is | themascores per plek, kandidaten, perceel-leads, scoremodel van de verkenning |
+| 12 | verantwoording | de tekst onderaan de pagina |
 
-Zie `inhoud/LEESMIJ.md` voor het formaat en de veelgemaakte fouten.
+Zie `inhoud/LEESMIJ.md` voor het formaat en de veelgemaakte fouten. De bouw stopt bij
+de eerste fout in de inhoud en zegt in welk bestand en op welke regel hij zit. Dat is
+met opzet: een pagina die stil doorbouwt met een stelling die nergens bij hoort, is
+gevaarlijker dan een bouw die weigert.
 
-De bouw stopt bij de eerste fout in de inhoud en zegt in welk bestand en op welke regel
-hij zit. Dat is met opzet: een dashboard dat stil doorbouwt met een stelling die nergens
-bij hoort, is gevaarlijker dan een bouw die weigert.
+Twee mechanismen maken de inhoudslaag af:
 
----
-
-## Wat de analyse laat zien
-
-**De ladder** is het hart. De verticale as is de *eensgezindheid*: één min de gemiddelde
-afstand tussen twee willekeurige antwoorden. Dat scheidt twee dingen die anders door
-elkaar lopen. Acht mensen die allemaal "erg mee oneens" invullen zijn maximaal
-eensgezind, ook al zeggen ze nee; samen nee zeggen is geen conflict. Links staat elke
-stelling op zijn werkelijke hoogte, zodat je de gaten ziet. Rechts staan dezelfde
-stellingen leesbaar, met de acht antwoorden als staafjes: vlak is eensgezind, een trap
-betekent verdeeld.
-
-**Waar het gewicht landt** zet het gewicht van de groep naast de dekking van dat thema
-over de plekken. Dat levert de scherpste bevinding op: bijna de helft van wat de groep
-zegt te wegen, valt op thema's die bij geen of nauwelijks een plek zijn ingevuld en
-verdwijnt daarmee stil uit elke locatiescore.
-
-**De trechter** laat zien hoeveel plekken overblijven per set vastgestelde grenzen. De
-scenario's staan in `01-instellingen.md`.
-
-**Wat niemand wil inleveren** telt de persoonlijke topvijven. Die laag telt bewust
-nergens in mee: een gewicht en een ondergrens zijn niet hetzelfde, en het is beter om
-die twee naast elkaar te laten zien dan ze te middelen tot één schijnprecies getal.
-
-**De plekken** toont per plek de score met de onzekerheidsband eromheen. Dat de banden
-elkaar overlappen is niet lelijk maar de boodschap: zolang dat zo is, kan het model geen
-enkele plek uitsluiten.
-
-Daaronder begint de afdeling over de verkenning.
-
-**Twee wegingen naast elkaar** is het scharnier van het hele dashboard. De verkenning
-verdeelt honderd punten over negen criteria, de groep over negen thema's, en via de
-kolom `pve-thema` in `11-scoremodel.md` liggen ze op dezelfde as. Wat eruit komt: de
-verkenning legt 40 punten op planologie, bestuur en verwerving waar de groep er 6,4 op
-legt, en de verkenning weegt niets op bodem, op lucht en geluid en op voorzieningen,
-terwijl de groep daar samen ruim dertig punten neerlegt. De verkenning meet of een plek
-haalbaar is, de groep meet of het er goed wonen is.
-
-**De achtenveertig kandidaten** laat alle kandidaten tegelijk zien, per regio en op
-prioriteit. Een gestippeld blokje heeft geen themascores en telt dus nergens in mee.
-Alle twaalf gescoorde plekken liggen in de regio Arnhem; van Apeldoorn en Den Bosch
-samen is er niet één gescoord.
-
-**De perceel-leads** toont de onderste laag per zoekzone, met de oppervlakteverdeling.
-Let op de verhouding door de hele keten: 283 leads, 48 kandidaten, 12 plekken met
-themascores.
+- **Elke zichtbare zin komt uit `02-teksten.md`**, ook de zinnen die de browser pas
+  tijdens het schuiven samenstelt. Een sleutel die ontbreekt stopt de bouw; er kan dus
+  geen leeg gat op de pagina ontstaan.
+- **Vakwoorden krijgen een vraagteken.** Schrijf `(?sleutel)` in een tekst en er
+  verschijnt een klein vraagteken dat verwijst naar de uitleg in `03-begrippen.md`.
+  Zonder JavaScript springt het naar de begrippenlijst onderaan de pagina; met
+  JavaScript verschijnt de uitleg ter plekke.
 
 ---
 
-## Wat de zeef doet
+## Wat er op de pagina staat
 
-Links staan de eisen, in de volgorde waarin ze tellen.
+**De zeef** is het hart. Links de eisen, in de volgorde waarin ze tellen: eerst de
+knock-outcriteria, dan de weging, dan de strengheid van het oordeel, dan wat je op de
+kaart wilt zien. Rechts de uitkomst: de kaart, wat er overblijft (met per plek de
+onzekerheidsband) en wat afvalt, met het criterium erbij dat het deed. Achter elk
+criterium staat hoeveel plekken het nog wegneemt bovenop wat al vaststaat; criteria
+die dezelfde plekken raken tellen zo niet dubbel, en dat is precies het soort inzicht
+dat in een vergadering anders een half uur kost.
 
-**1 · de grenzen.** De acht knock-outs uit `06-knock-outs.md`, elk met een schakelaar.
-Achter elke schakelaar staat hoeveel plekken die grens nog wegneemt *bovenop* wat er al
-vaststaat. Zet je K2 aan, dan zakt het getal achter K8 naar nul: die twee raken dezelfde
-plekken, dus samen nemen ze er niet tien weg maar vijf. Dat is precies het soort ding
-dat je in een tabel niet ziet en in een gesprek eindeloos kost.
+**Waar de eisen vandaan komen** onderbouwt de linkerhelft van de zeef: de ladder (hoe
+eensgezind de groep per stelling is), waar het gewicht landt en of daar dekking
+tegenover staat, de trechter met voorbeeldstanden, en wat niemand wil inleveren (de
+persoonlijke topvijven, die bewust nergens in meetellen).
 
-**2 · de weging.** Negen schuiven, standaard op de weging uit ons eigen
-stellingenformulier. Schuiven mag: dan zie je meteen wat een andere verdeling met de
-volgorde doet. Eén knop zet alles terug.
+**Wat er is** onderbouwt de rechterhelft: de twee wegingen naast elkaar (de verkenning
+weegt of een plek haalbaar is, de groep of het er goed wonen is), de 48 kandidaten per
+regio, en de perceel-leads per zoekzone. Hier staat ook de scherpste bevinding: alle
+twaalf gescoorde plekken liggen in de regio Arnhem, dus het programma van eisen heeft
+tot nu toe over één regio geoordeeld terwijl de verkenning er drie bestrijkt.
 
-**3 · de drempels en de lagen.** Vanaf welk cijfer iets groen mag heten, hoeveel thema's
-er minimaal ingevuld moeten zijn voordat groen betekenis heeft, en welke lagen je op de
-kaart wilt: kandidaten, perceel-leads, archetypen, en per regio.
+**Wat nog moet** is de onderzoeksagenda. Niets erin is met de hand ingevuld: de lijsten
+komen rechtstreeks uit dezelfde cijfers als de grafieken, dus de agenda loopt vanzelf
+leeg naarmate het onderzoek vordert.
 
-Rechts staat de uitkomst: de teller, de kaart, wat er overblijft op volgorde van score
-met de onzekerheidsband eromheen, en onderaan wat afvalt met de grens erbij die het
-deed. De volgorde is niet vrijblijvend: **een plek die een vastgestelde grens raakt valt
-af, hoe hoog hij verder ook scoort.** Dat is precies wat een gewogen gemiddelde niet kan
-uitdrukken, en daarom staan de grenzen bovenaan en de weging eronder.
-
-De zeef rekent in de browser met dezelfde functies als `npm test` natrekt. De inhoud van
-`src/kern.mjs` wordt bij het bouwen letterlijk in de pagina geplakt in plaats van
-nagebouwd; er is een test die controleert dat dat ook echt gebeurd is.
+**Begrippen** en **verantwoording** sluiten af. Elk vraagteken op de pagina komt hier
+uit voort.
 
 ---
 
-## Vijf keuzes die je moet kennen
+## De keuzes, en waarom
+
+**Knock-outcriteria gaan vóór het cijfer.** Een gewogen gemiddelde ruilt alles tegen
+alles weg: een mooie bereikbaarheid kan een onveilige bodem wegpoetsen. Daarom valt een
+plek die een vastgesteld criterium raakt af, wat de score ook is, en staan de criteria
+in de bediening boven de weging. Welke criteria vaststaan is een groepsbesluit; de
+uitgangsstand is leeg.
 
 **Onbekend is niet nul en niet gemiddeld, maar weg.** Een thema zonder cijfer valt uit
 de noemer en zijn gewicht wordt over de rest verdeeld. Een plek wordt dus beoordeeld op
-zijn bekende kant. Daarom staat de band altijd naast de score, en daarom is leeg laten
-eerlijker dan gokken.
+zijn bekende kant. Daarom staat de onzekerheidsband altijd naast de score, en daarom is
+leeg laten eerlijker dan gokken.
 
-**De weegmethode maakt uit.** `rangorde` telt per lid alleen de eigen volgorde van de
-negen thema's, zodat streng en mild aankruisen even zwaar wegen. `gemiddelde` is de
-methode van de oorspronkelijke rekentool en meet mede hoe streng iemand is. Bouw beide
-en leg ze naast elkaar met `npm run vergelijk`.
+**De weegmethode staat open en is een keuze.** Standaard telt per persoon alleen de
+eigen volgorde van de thema's (rangorde), zodat streng en mild aankruisen even zwaar
+wegen. Het ruwe gemiddelde, de methode van de oorspronkelijke rekentool, blijft
+beschikbaar via `npm run vergelijk`.
 
-**De grens tussen "samen" en "net over de sloot" ligt bij twee tegenstemmers.** Dat is
-een afspraak van de groep en geen meting. Hij staat in `01-instellingen.md` en in de
-voetnoot van het dashboard.
+**Eén weging voor de verkenning.** De verkenning kende twee profielen naast elkaar
+(netgebonden en energie-autonoom met waterstof). Die tweedeling suggereerde een
+afweging die de groep nog niet heeft gemaakt en is uit het model gehaald; het
+netgebonden profiel staat in `11-scoremodel.md`, met de redenering erbij. De kolom
+`spoor` in de gegevensbestanden is archief en wordt nergens gelezen.
 
-**De vertaling van criteria naar thema's is analyse, geen gegeven.** De kolom
-`pve-thema` in `11-scoremodel.md` bepaalt hoe de weging van de verkenning op de as van
-het PvE landt. Vind je dat "prijs en onzekerheid" eerder bij thema H hoort dan bij F,
-pas de kolom dan aan en bouw opnieuw. Dat de vertaling aanvechtbaar is, is precies
-waarom ze in een Markdown-bestand staat en niet in de code.
-
-**De tweedeling in sporen is eruit.** De verkenning kende twee wegingsprofielen naast
-elkaar, een netgebonden en een energie-autonoom profiel met waterstof. Het model draait
-nu op één weging, het netgebonden profiel; zie de toelichting bovenaan
-`11-scoremodel.md`. De kolom `spoor` staat nog wel in `09-kandidaten.md` en
-`10-perceel-leads.md`, als archief van de verkenning, maar de tool doet er niets mee.
+**De vertaling van verkenningscriteria naar thema's is analyse, geen gegeven.** De
+kolom `pve-thema` in `11-scoremodel.md` bepaalt hoe de weging van de verkenning op de
+as van het programma van eisen landt. Ze is aanvechtbaar, en dat hoort ze te zijn:
+daarom staat ze in een Markdown-bestand en niet in de code.
 
 **De antwoorden worden per stelling gehusseld.** Je ziet de verdeling maar niet wie wat
 invulde, in lijn met de afspraak dat individuele profielen alleen met instemming worden
-gedeeld. Zet `anonimiseren: nee` in `05-antwoorden.md` als de groep daar anders over
-besluit. Het husselen gebruikt een vaste startwaarde, dus een herbouw geeft geen ruis in
-de git-geschiedenis.
+gedeeld. Het husselen gebruikt een vaste startwaarde, dus een herbouw geeft geen ruis
+in de git-geschiedenis. Uitzetten kan met `anonimiseren: nee` in `06-antwoorden.md`.
+
+**Codes zijn adressen, geen taal.** De bestanden verwijzen naar elkaar met K1 tot K8 en
+A tot I; op de pagina verschijnt altijd de volledige naam, met een vraagteken voor de
+uitleg. Een test leest de pagina zoals een bezoeker dat doet, tooltips inbegrepen, en
+zakt zodra ergens een kale code in beeld komt.
 
 ---
 
 ## Wat dit niet is
 
 Geen besluit en geen uitslag. Eén zwaarwegend bezwaar telt zwaarder dan elk gemiddelde
-hier. De koppeling van grenzen aan specifieke plekken (kolom `raakt` in
-`07-locaties.md`) is een inschatting op basis van ligging en regelgeving, geen
-perceelsgewijze toets; in het dashboard staan die vermoedens als zodanig gemarkeerd. De
-themascores zijn indicaties uit de brede verkenning.
+hier. De koppeling van knock-outcriteria aan plekken (kolom `raakt` in
+`08-themascores.md`) is een inschatting op ligging en regelgeving, geen perceelsgewijze
+toets; de onderzoeksagenda op de pagina zegt dat er ook bij. De themascores zijn
+indicaties uit de brede verkenning, geen metingen.
 
 ---
 
 ## Opbouw van de code
 
 ```
-inhoud/          alle gegevens en teksten, als Markdown
+inhoud/           alle gegevens en teksten, als Markdown
 src/
-  markdown.mjs   frontmatter, tabellen en secties lezen
-  inhoud.mjs     inladen en controleren; alle validatie zit hier
-  bereken.mjs    de rekenkern; elke functie is puur en getest
-  stijl.mjs      het stijlblad uit de huisstijltabellen
-  svg.mjs        hulpjes om svg als tekst te bouwen
-  kern.mjs       de rekenkern die bouw en browser delen; zonder imports, met opzet
-  sjabloon.mjs   het html-skelet en de interactielaag van de analyse
-  panelen/       de acht grafieken, elk in een eigen bestand
-  zeef.mjs       de zeefpagina: bediening, kaart en de ingeplakte kern
-  bouw.mjs       ingang: leest, rekent, schrijft dist/
-  controleer.mjs kleurcontrole (contrast, ramp, kleurenblindheid)
-test/            testloper zonder afhankelijkheden, plus de bundel
-dist/index.html  de zeef, meegecommit
-dist/analyse.html de analyse, meegecommit
+  markdown.mjs    frontmatter, tabellen en secties lezen
+  inhoud.mjs      inladen en controleren; alle validatie zit hier
+  kern.mjs        het oordeel over één plek; draait ook in de browser
+  statistiek.mjs  de groepsstatistiek: gewichten, eensgezindheid, overzichten
+  stijl.mjs       het stijlblad uit de huisstijltabellen
+  svg.mjs         hulpjes om svg als tekst te bouwen
+  panelen/        de zeven grafieken, elk in een eigen bestand
+  zeef.mjs        de interactieve zeefsectie en haar browserscript
+  pagina.mjs      het paginaskelet: secties, begrippen, interactielaag
+  bouw.mjs        ingang: leest, rekent, schrijft dist/index.html
+  controleer.mjs  kleurcontrole (contrast, ramp, kleurenblindheid)
+test/             testloper zonder afhankelijkheden, plus de bundel
+dist/index.html   de gebouwde pagina, meegecommit
 ```
 
-`src/kern.mjs` is met opzet klein en importeert niets: hij wordt zowel als module
-ingeladen door de bouw als letterlijk in de zeefpagina geplakt. Voeg er alleen zuivere
-functies aan toe, geen bestandssysteem en geen DOM.
-
-De grafieken worden **bij het bouwen** getekend, niet in de browser. Daardoor is het
-dashboard leesbaar zonder JavaScript en kun je de uitvoer in git vergelijken. De
-meegeleverde JavaScript doet alleen de tooltips, de donkere modus en de tabelknop.
+De taakverdeling die alles verklaart: **`kern.mjs` beoordeelt één plek en wordt bij het
+bouwen letterlijk in de pagina geplakt**, zodat de browser met exact dezelfde functies
+rekent als `npm test` natrekt; `statistiek.mjs` rekent over de groep en draait alleen
+bij het bouwen. De grafieken worden bij het bouwen als svg getekend, dus de
+onderbouwing is leesbaar zonder JavaScript; de meegeleverde scripts doen de zeef, de
+tooltips, de donkere modus, de tabelknop en de uitlegkaartjes.
 
 `npm test` rekent niet alleen de losse functies na, maar ook de cijfers die in de
-rapporten staan: de themagewichten, de 47 procent, de indeling van de stellingen, de
-trechter van twaalf naar drie, het wegingsverschil van 33,6 punten op thema F, en dat
-alle gescoorde plekken in één regio liggen. Verandert er iets aan de inhoud of de
-methode, dan zakt die test. Dat is het doel: de getallen in het dashboard en de getallen
-in de rapporten moeten dezelfde getallen zijn.
-
-Twee controles gaan niet over cijfers maar over de bouw zelf, en staan er omdat het daar
-eerder is misgegaan. De ene kijkt of elke `var(--x)` in het stijlblad ook echt
-gedefinieerd is: een ontbrekende variabele geeft geen foutmelding in de browser, hij
-maakt stilletjes alle witruimte nul. De andere kijkt of de kern werkelijk in de
-zeefpagina staat. `npm test` schrijft zelf niets naar `dist/`; die bouw is een artefact
-van `npm run bouw`.
+rapporten staan: de themagewichten, de indeling van de stellingen, de trechter van
+twaalf naar drie, het wegingsverschil van 33,6 punten op planologie, en dat alle
+gescoorde plekken in één regio liggen. Daarnaast bewaakt de bundel de afspraken van de
+pagina zelf: de kern staat werkelijk in de uitvoer, elke css-variabele bestaat, elk
+vraagteken wijst naar een bestaand begrip, elk begrip wordt gebruikt, en er komt geen
+kale code in beeld. `npm test` schrijft zelf niets naar `dist/`; die bouw is een
+artefact van `npm run bouw`.
 
 ---
 
 ## Het display-lettertype
 
 Evolorahof gebruikt in zijn presentaties een letter die in de bestanden
-`Evolorahof Display` heet. Dat is een hernoemde versie van een commercieel
-gelicentieerde letter (Fontatica-4F van Sergiy S. Tkachenko, 4th february), waarvan de
-licentie verspreiding verbiedt. **Die letter staat daarom niet in deze repository.**
-
-Het dashboard gebruikt zonder die letter een terugval uit `00-huisstijl.md` en ziet er
-verder identiek uit. Wil je de echte letter gebruiken op je eigen machine, zie
-`assets/lettertype/LEESMIJ.md`.
-
----
+`Evolorahof Display` heet: een hernoemde versie van een commercieel gelicentieerde
+letter (Fontatica 4F van 4th february), waarvan de licentie verspreiding verbiedt.
+**Die letter staat daarom niet in deze repository.** De pagina gebruikt de terugval uit
+`00-huisstijl.md` (Open Sans, conform de huisstijl) en ziet er verder identiek uit. Zie
+`assets/lettertype/LEESMIJ.md` om hem lokaal toe te voegen.
 
 ## Taal
 
 Bestandsnamen, functienamen en commentaar zijn Nederlands. Dat is een bewuste keuze: de
-mensen die deze inhoud bewerken zijn Nederlandstalig, de bestaande rekentool van
-Evolorahof is dat ook, en `inhoud/` moet leesbaar zijn voor iemand die geen
-programmeur is.
+mensen die deze inhoud bewerken zijn Nederlandstalig, en `inhoud/` moet leesbaar zijn
+voor iemand die geen programmeur is.
 
 ## Licentie
 

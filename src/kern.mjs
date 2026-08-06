@@ -38,9 +38,9 @@ export function locatiescore(scores, gewicht, themacodes, invulling = null) {
 /**
  * Het oordeel over één plek, in de volgorde die ertoe doet.
  *
- * Eerst de vastgestelde grenzen: een plek die er één raakt valt af, hoe goed hij verder
- * ook scoort. Dat is het hele punt van een grens, en een gewogen gemiddelde kan dat niet
- * uitdrukken. Daarna pas de dekking, en pas daarna het cijfer.
+ * Eerst de vastgestelde knock-outcriteria: een plek die er één raakt valt af, hoe goed
+ * hij verder ook scoort. Dat is het hele punt van zo'n criterium, en een gewogen
+ * gemiddelde kan het niet uitdrukken. Daarna pas de dekking, en pas daarna het cijfer.
  *
  * Groen vraagt zowel een hoge score als genoeg onderzocht thema's. Rood mag ook bij dunne
  * dekking: een lage score op de weinige dingen die we weten is een waarschuwing, geen
@@ -77,10 +77,11 @@ export const STANDEN = {
 };
 
 /**
- * Hoeveel plekken een grens in zijn eentje wegneemt, gegeven wat er al is vastgesteld.
- * Dit staat naast elke schakelaar, zodat je vóór het aanzetten ziet wat hij doet.
+ * Hoeveel plekken een knock-outcriterium in zijn eentje wegneemt, gegeven wat er al is
+ * vastgesteld. Dit staat naast elke schakelaar, zodat je vóór het aanzetten ziet wat
+ * hij doet; criteria die dezelfde plekken raken tellen zo niet dubbel.
  */
-export function effectVanGrens(plekken, code, vastgesteld) {
+export function effectVanKnockout(plekken, code, vastgesteld) {
   const zonder = vastgesteld.filter((c) => c !== code);
   const overZonder = plekken.filter((p) => !(p.raakt ?? []).some((r) => zonder.includes(r)));
   return overZonder.filter((p) => (p.raakt ?? []).includes(code)).length;

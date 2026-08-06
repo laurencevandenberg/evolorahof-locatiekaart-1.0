@@ -49,7 +49,7 @@ export function wegingen(rijen, { breedte }) {
     const xVerkenning = naarX(rij.verkenning);
     const groot = Math.abs(rij.verschil) >= GROOT;
 
-    delen.push(tekst(`${rij.code} · ${rij.naam}`,
+    delen.push(tekst(rij.naam,
       { x: X_NAAM - 12, y: y + 4, 'text-anchor': 'end', 'font-size': 13, fill: 'var(--inkt)' }));
 
     // het gat tussen de twee wegingen
@@ -83,7 +83,7 @@ export function wegingen(rijen, { breedte }) {
       ? rij.criteria.map((c) => `· ${c}`).join('<br>')
       : '<i>de verkenning weegt niets op dit thema</i>';
     delen.push(trefvlak(0, y - REGEL / 2, breedte, REGEL,
-      `<b>${rij.code} · ${rij.naam}</b><br><br>` +
+      `<b>${rij.naam}</b><br><br>` +
       `de groep: <b>${getal(rij.groep)}</b><br>` +
       `de verkenning: <b>${getal(rij.verkenning)}</b><br><br>` +
       `criteria van de verkenning op dit thema:<br>${criteria}`));

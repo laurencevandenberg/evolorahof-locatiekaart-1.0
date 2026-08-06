@@ -1,7 +1,7 @@
 ---
 titel: Instellingen
 weegmethode: rangorde
-vastgestelde-grenzen: []
+vastgestelde-knock-outs: []
 tegenstemmers-voor-sloot: 2
 minimale-dekking-voor-groen: 5
 groen-vanaf: 65
@@ -11,11 +11,11 @@ rood-onder: 45
 # Instellingen
 
 De knoppen die de uitkomst sturen. Elke instelling staat hier één keer, zodat je nooit
-in de code hoeft te zoeken waar een grens vandaan komt.
+in de code hoeft te zoeken waar een drempel vandaan komt.
 
 ## Weegmethode
 
-`weegmethode` bepaalt hoe de antwoorden een gewicht per thema worden.
+`weegmethode` bepaalt hoe de ingevulde formulieren een weging per thema worden.
 
 - `rangorde` telt per lid alleen de eigen volgorde van de negen thema's. Wie streng
   aankruist en wie mild aankruist tellen dan even zwaar. Dit is de aanbevolen stand.
@@ -24,38 +24,42 @@ in de code hoeft te zoeken waar een grens vandaan komt.
   waardoor de negen thema's dichter bij elkaar eindigen.
 
 Het verschil is groot genoeg om te zien en klein genoeg om beide te laten zien. Bouw
-gerust twee keer en leg ze naast elkaar.
+gerust twee keer (`npm run vergelijk`) en leg ze naast elkaar.
 
-## Vastgestelde grenzen
+## Vastgestelde knock-outcriteria
 
-`vastgestelde-grenzen` is de lijst codes uit `06-knock-outs.md` die de groep heeft
-aangenomen. Zolang de lijst leeg is, valt geen enkele plek af en doet de score al het
-werk. Dat is de eerlijke uitgangsstand: de grenzen zijn een besluit, geen aanname.
+`vastgestelde-knock-outs` is de lijst codes uit `07-knock-outs.md` die de groep als
+besluit heeft aangenomen. Zolang de lijst leeg is, valt geen enkele plek af en doet de
+score al het werk. Dat is de eerlijke uitgangsstand: een knock-outcriterium is een
+besluit, geen aanname, en de zeef op de pagina laat iedereen vrij proberen wat elk
+criterium zou doen.
 
 Voorbeeld na een consentronde:
 
 ```yaml
-vastgestelde-grenzen: [K7, K8]
+vastgestelde-knock-outs: [K7, K8]
 ```
 
 ## Waar de streep ligt
 
 `tegenstemmers-voor-sloot` bepaalt vanaf hoeveel tegenstemmers een stelling met een
 meerderheid vóór toch als "net over de sloot" wordt aangemerkt. Standaard 2. Dit is een
-afspraak en geen meting; hij staat expliciet in de voetnoot van het dashboard.
+afspraak en geen meting; hij staat ook zo uitgelegd in de begrippenlijst.
 
 `minimale-dekking-voor-groen` is het aantal thema's dat gescoord moet zijn voordat een
-plek groen mag heten. `groen-vanaf` en `rood-onder` zijn de scoregrenzen daarbij.
+plek "voldoet" mag heten. `groen-vanaf` en `rood-onder` zijn de scoregrenzen daarbij:
+vanaf `groen-vanaf` kan een plek voldoen, onder `rood-onder` heet hij te zwak.
 
 ## Scenario's voor de trechter
 
-Elke regel is een stap in de trechter. `grenzen` is een lijst codes; leeg betekent
-geen enkele grens toegepast. De trechter rekent per stap uit hoeveel kandidaten
-overblijven en welke daarvan het hoogst scoort.
+Elke regel is een stap in de trechter op de pagina. `knock-outs` is een lijst codes uit
+`07-knock-outs.md`; leeg betekent dat er geen enkel criterium is toegepast. De trechter
+rekent per stap uit hoeveel gescoorde plekken overblijven en welke daarvan het hoogst
+scoort. De naam is vrije tekst en verschijnt letterlijk in beeld.
 
-| naam | grenzen | toelichting |
-|------|---------|-------------|
-| geen grens | | alle gescoorde kandidaten |
-| K7 water | K7 | Betuwe en rivieroever vallen af |
-| K2 en K8 | K2, K8 | stikstof en de eis van drie jaar halen de Veluweflank weg |
-| alle drie | K2, K7, K8 | alleen bestaand stedelijk gebied blijft over |
+| naam | knock-outs | toelichting |
+|------|------------|-------------|
+| niets vastgesteld | | alle gescoorde plekken |
+| waterdiepte vast | K7 | Betuwe en rivieroever vallen af |
+| stikstof en bouwtermijn vast | K2, K8 | de eisen die de Veluweflank wegnemen |
+| alle drie vast | K2, K7, K8 | alleen bestaand stedelijk gebied blijft over |

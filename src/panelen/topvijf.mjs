@@ -36,7 +36,7 @@ export function topvijf(stellingen, { breedte = 520, aantalLeden }) {
       { x: X + BALK + 44, y: y + 4, 'font-size': 12, fill: 'var(--inkt)' }));
 
     delen.push(trefvlak(0, y - 13, breedte, REGEL - 2,
-      `<b>Stelling ${rij.nr}</b> · thema ${rij.thema}<br>${rij.tekst}<br><br>` +
+      `<b>Stelling ${rij.nr}</b> · ${rij.themanaam}<br>${rij.tekst}<br><br>` +
       `in <b>${rij.topvijf}</b> van de ${aantalLeden} topvijven` +
       (rij.zeeft ? '' : '<br><i>thema nergens gescoord: telt niet mee in welke plek afvalt</i>')));
   });

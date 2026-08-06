@@ -279,3 +279,97 @@ export function kerncijfers(inhoud, gewicht, stellingen) {
     verdeeld: tel('verdeeld'),
   };
 }
+
+/* ------------------------------------------------- de verkenning ernaast ---- */
+
+/**
+ * Vertaalt de negen criteria van de verkenning naar de negen thema's van het PvE, zodat
+ * de twee wegingen op dezelfde as liggen. Criteria die op hetzelfde thema uitkomen
+ * worden opgeteld: "stikstof", "herbestembaarheid", "prijs" en "bestuurlijke
+ * ontvankelijkheid" vallen alle vier onder thema F, en samen zijn ze zwaar.
+ *
+ * De uitkomst is per thema een percentage, net als het groepsgewicht, dus de twee zijn
+ * rechtstreeks vergelijkbaar. Thema's waar de verkenning niets op weegt komen op nul uit.
+ */
+export function verkenningsweging(scoremodel, themas) {
+  const uit = {};
+  for (const { code } of themas) uit[code] = { A: 0, B: 0 };
+  for (const rij of scoremodel) {
+    uit[rij.thema].A += rij.wegingA * 100;
+    uit[rij.thema].B += rij.wegingB * 100;
+  }
+  return uit;
+}
+
+/**
+ * Legt het groepsgewicht naast de verkenningsweging en rekent per thema het verschil uit.
+ * Gesorteerd op de grootste afwijking, want daar zit het gesprek.
+ */
+export function wegingsverschil(scoremodel, themas, groepsgewichten) {
+  const verkenning = verkenningsweging(scoremodel, themas);
+  return themas
+    .map((thema) => {
+      const groep = groepsgewichten[thema.code];
+      const { A, B } = verkenning[thema.code];
+      // Het verschil meten we tegen het spoor dat het dichtst bij de groep ligt: als de
+      // twee sporen sterk uiteenlopen is dat op zichzelf informatie, geen strafpunt.
+      const dichtstbij = Math.abs(A - groep) <= Math.abs(B - groep) ? A : B;
+      return {
+        ...thema,
+        groep,
+        verkenningA: A,
+        verkenningB: B,
+        verschil: groep - dichtstbij,
+        criteria: scoremodel.filter((r) => r.thema === thema.code).map((r) => r.criterium),
+      };
+    })
+    .sort((a, b) => Math.abs(b.verschil) - Math.abs(a.verschil));
+}
+
+/** Telling van de kandidaten langs de assen waarop de verkenning ze indeelt. */
+export function kandidaatoverzicht(kandidaten) {
+  const tel = (veld) => {
+    const uit = new Map();
+    for (const kandidaat of kandidaten) {
+      uit.set(kandidaat[veld], (uit.get(kandidaat[veld]) ?? 0) + 1);
+    }
+    return [...uit.entries()].map(([waarde, aantal]) => ({ waarde, aantal }));
+  };
+  const woonlocaties = kandidaten.filter((k) => k.categorie === 'kandidaat');
+  return {
+    totaal: kandidaten.length,
+    woonlocaties: woonlocaties.length,
+    metThemascores: kandidaten.filter((k) => k.heeftThemascores).length,
+    hoogZonderThemascores: kandidaten.filter(
+      (k) => k.prioriteit === 'hoog' && !k.heeftThemascores).length,
+    perRegio: tel('regio'),
+    perSpoor: tel('spoor'),
+    perPrioriteit: tel('prioriteit'),
+    perCategorie: tel('categorie'),
+    perVertrouwen: tel('vertrouwen'),
+  };
+}
+
+/** Perceel-leads gebundeld per zoekzone, met de oppervlakteverdeling erbij. */
+export function leadoverzicht(leads) {
+  const zones = new Map();
+  for (const lead of leads) {
+    if (!zones.has(lead.zoekzone)) {
+      zones.set(lead.zoekzone, { zoekzone: lead.zoekzone, regio: lead.regio, hectares: [] });
+    }
+    zones.get(lead.zoekzone).hectares.push(lead.hectare);
+  }
+  return [...zones.values()]
+    .map((zone) => {
+      const gesorteerd = [...zone.hectares].sort((a, b) => a - b);
+      return {
+        zoekzone: zone.zoekzone,
+        regio: zone.regio,
+        aantal: gesorteerd.length,
+        mediaan: gesorteerd[Math.floor(gesorteerd.length / 2)],
+        kleinste: gesorteerd[0],
+        grootste: gesorteerd.at(-1),
+      };
+    })
+    .sort((a, b) => b.aantal - a.aantal);
+}

@@ -146,6 +146,17 @@ table.data td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--raster);
 table.data td.num { text-align: right; }
 table.data tr.let td { background: color-mix(in srgb, var(--terra) 7%, transparent); }
 
+/* ------------------------------------------------------- afdelingen en navigatie */
+.afdeling {
+  font-size: 30px; margin: 40px 0 4px; scroll-margin-top: 16px;
+  border-top: 2px solid var(--terra); padding-top: 18px;
+}
+.afdeling-uitleg { color: var(--gedempt); max-width: 720px; margin: 0 0 20px; font-size: 14px; }
+nav.sprong { display: flex; gap: 18px; flex-wrap: wrap; margin: 0 0 24px; font-size: 13px; }
+nav.sprong a { color: var(--gedempt); text-decoration: none; border-bottom: 1px solid var(--rand); }
+nav.sprong a:hover { color: var(--terra); border-color: var(--terra); }
+a.knop { text-decoration: none; display: inline-block; }
+
 /* ------------------------------------------------------------------- diversen */
 .verborgen { display: none; }
 .voet { font-size: 12px; color: var(--flauw); line-height: 1.6; }

@@ -16,6 +16,7 @@ import { leesMarkdown, naarHtml, escapeHtml } from '../src/markdown.mjs';
 import {
   eensgezindheid, stellingstatus, gewichtRangorde, gewichtGemiddelde,
   groepsgewicht, locatiescore, hussel, toevalsreeks,
+  verkenningsweging, wegingsverschil, kandidaatoverzicht, leadoverzicht,
 } from '../src/bereken.mjs';
 import { bouw } from '../src/bouw.mjs';
 import { contrast, afstand } from '../src/controleer.mjs';
@@ -244,7 +245,82 @@ test('stellingteksten met aanhalingstekens breken de svg niet', () => {
     'er staat een onveilig aanhalingsteken in een svg-tekst');
 });
 
-/* ======================================================= 4. de kleurleer */
+/* ============================================= 4. de verkenning ernaast */
+
+test('de verkenningsweging telt per spoor op tot honderd', () => {
+  const weging = verkenningsweging(uitkomst.inhoud.scoremodel, uitkomst.inhoud.themas);
+  const somA = Object.values(weging).reduce((a, t) => a + t.A, 0);
+  const somB = Object.values(weging).reduce((a, t) => a + t.B, 0);
+  bijna(somA, 100, 0.01, 'spoor A');
+  bijna(somB, 100, 0.01, 'spoor B');
+});
+
+test('vier criteria vallen samen op thema F en maken het zwaar', () => {
+  const weging = verkenningsweging(uitkomst.inhoud.scoremodel, uitkomst.inhoud.themas);
+  bijna(weging.F.A, 40, 0.01, 'planologie in spoor A');
+  bijna(weging.F.B, 53, 0.01, 'planologie in spoor B');
+});
+
+test('de verkenning weegt niets op drie themas die de groep wel weegt', () => {
+  const weging = verkenningsweging(uitkomst.inhoud.scoremodel, uitkomst.inhoud.themas);
+  for (const code of ['B', 'C', 'I']) {
+    gelijk(weging[code].A, 0, `thema ${code} in spoor A`);
+    gelijk(weging[code].B, 0, `thema ${code} in spoor B`);
+  }
+  const samen = ['B', 'C', 'I'].reduce((som, code) => som + uitkomst.gewicht[code], 0);
+  gelijk(samen > 30, true, 'de groep weegt er samen meer dan dertig punten op');
+});
+
+test('het grootste wegingsverschil zit op planologie en verwerving', () => {
+  const rijen = wegingsverschil(
+    uitkomst.inhoud.scoremodel, uitkomst.inhoud.themas, uitkomst.gewicht);
+  gelijk(rijen[0].code, 'F');
+  bijna(rijen[0].verschil, -33.6, 0.1);
+});
+
+test('de kandidaten en de leads zijn compleet ingelezen', () => {
+  const overzicht = kandidaatoverzicht(uitkomst.inhoud.kandidaten);
+  gelijk(overzicht.totaal, 48);
+  gelijk(overzicht.woonlocaties, 40);
+  gelijk(uitkomst.inhoud.leads.length, 283);
+});
+
+test('alle gescoorde plekken liggen in een van de drie regios', () => {
+  const perRegio = {};
+  for (const kandidaat of uitkomst.inhoud.kandidaten) {
+    perRegio[kandidaat.regio] = (perRegio[kandidaat.regio] ?? 0)
+      + (kandidaat.heeftThemascores ? 1 : 0);
+  }
+  gelijk(perRegio, { Apeldoorn: 0, Arnhem: 12, 'Den Bosch': 0 },
+    'als dit verschuift, is er in een tweede regio gescoord en verandert het verhaal');
+});
+
+test('zeven van de negen kandidaten met hoge prioriteit zijn niet gescoord', () => {
+  const overzicht = kandidaatoverzicht(uitkomst.inhoud.kandidaten);
+  gelijk(overzicht.hoogZonderThemascores, 7);
+});
+
+test('de leads liggen allemaal binnen de gezochte maat', () => {
+  const zones = leadoverzicht(uitkomst.inhoud.leads);
+  gelijk(zones.length, 12);
+  gelijk(zones.every((z) => z.kleinste >= 1.5 && z.grootste <= 2.0), true);
+  gelijk(zones.reduce((som, z) => som + z.aantal, 0), 283);
+});
+
+test('de kaartpagina wordt gebouwd en bevat alle punten', () => {
+  gelijk(uitkomst.kaartHtml.includes('leaflet'), true);
+  gelijk(uitkomst.kaartHtml.includes('AR01'), true);
+  gelijk(uitkomst.kaartHtml.includes('P071'), true);
+  gelijk(uitkomst.kaartHtml.includes('De kaart kon niet laden'), true,
+    'er hoort een terugvalmelding in te zitten voor wie geen internet heeft');
+});
+
+test('het dashboard verwijst naar de kaart en andersom', () => {
+  gelijk(uitkomst.html.includes('href="kaart.html"'), true);
+  gelijk(uitkomst.kaartHtml.includes('href="index.html"'), true);
+});
+
+/* ======================================================= 5. de kleurleer */
 
 test('contrast van wit op zwart is 21:1', () => {
   bijna(contrast('#ffffff', '#000000'), 21, 0.01);

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PvE 2.0 · waar we het over eens zijn · Evolorahof</title>
+<style>
+@font-face {
+  font-family: "Evolorahof Display";
+  src: url(data:font/ttf;base64,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AHUAYQApAC4ADQAKAEEAbABsACAAcgBpAGcAaAB0AHMAIAByAGUAcwBlAHIAdgBlAGQALgAgAFQAaABpAHMAIABmAG8AbgB0ACAAcwBvAGYAdAB3AGEAcgBlACAAaQBzACAAdABoAGUAIABwAHIAbwBwAGUAcgB0AHkAIABvAGYAIABTAGUAcgBnAGkAeQAgAFMALgAgAFQAawBhAGMAaABlAG4AawBvACAAKABLAHIAZQBtAGUAbgBjAGgAdQBrACwAIABVAGsAcgBhAGkAbgBlACkALgAgAFkAbwB1ACAAbQBhAHkAIABuAG8AdAAgAHIAZQBwAHIAbwBkAHUAYwBlACwAIABtAG8AZABpAGYAeQAsACAAYQBkAGEAcAB0ACwAIAB0AHIAYQBuAHMAbABhAHQAZQAsACAAYQBsAHQAZQByACAAbgBvAHIAIABjAHIAZQBhAHQAZQAgAGQAZQByAGkAdgBhAHQAaQB2AGUAIAB3AG8AcgBrAHMAIABvAGYAIAB0AGgAZQAgAGYAbwBuAHQAIABzAG8AZgB0AHcAYQByAGUALgAgAFkAbwB1ACAAbQBhAHkAIABuAG8AdAAgAHIAZQB2AGUAcgBzAGUAIABlAG4AZwBpAG4AZQBlAHIALAAgAGQAZQBjAG8AbQBwAGkAbABlACwAIABkAGUAYwByAHkAcAB0ACwAIABkAGkAcwBhAHMAcwBlAG0AYgBsAGUALAAgAG4AbwByACAAcwBlAGUAawAgAHQAbwAgAGQAaQBzAGMAbwB2AGUAcgAgAHQAaABlACAAcwBvAHUAcgBjAGUAIABjAG8AZABlACAAbwBmACAAdABoAGUAIABmAG8AbgB0ACAAcwBvAGYAdAB3AGEAcgBlAC4ARQB2AG8AbABvAHIAYQBoAG8AZgAgAEQAaQBzAHAAbABhAHkAUgBlAGcAdQBsAGEAcgBjAG8AbQAuAG0AeQBmAG8AbgB0AHMALgBlAGEAcwB5AC4ANAB0AGgAZgBlAGIAcgB1AGEAcgB5AC4AZgBvAG4AdABhAHQAaQBjAGEALQA0AGYALgByAGUAZwB1AGwAYQByAC4AdwBmAGsAaQB0ADIALgB2AGUAcgBzAGkAbwBuAC4AMwBUAFYASwAxAC4AMAA7AGMAbwBtAC4AbQB5AGYAbwBuAHQAcwAuAGUAYQBzAHkALgA0AHQAaABmAGUAYgByAHUAYQByAHkALgBmAG8AbgB0AGEAdABpAGMAYQAtADQAZgAuAHIAZQBnAHUAbABhAHIALgB3AGYAawBpAHQAMgAuAHYAZQByAHMAaQBvAG4ALgAzAFQAVgBLAEUAdgBvAGwAbwByAGEAaABvAGYARABpAHMAcABsAGEAeQAtAFIAZQBnAHUAbABhAHIAAwAAAAAAAP+DADIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA1aQnCAAAAADLZ5enAAAAAMz3TmsAAQAAAAwAAAAAAAAAAgAIAAMAAwABAAoACgABAA8AEAABABMAHQABAEQAUwABAFUAWgABAF0AXQABAHAAcAAB) format("truetype");
+}
+
+:root {
+  --ink: #2a2723; --muted: #5a524a; --faint: #9a9082;
+  --cream: #faf7f0; --deep: #f3ecdd; --wit: #ffffff; --border: #c9bfa8;
+  --terra: #b0463c; --green: #437059;
+  /* ordinale groenramp, gevalideerd voor lichte modus */
+  --g1: #9db69c; --g2: #7d9a84; --g3: #5d856f; --g4: #437059;
+  --raster: #e6ddca;
+}
+:root[data-modus="donker"] {
+  --ink: #f2ede2; --muted: #bcb3a4; --faint: #8d8477;
+  --cream: #23211e; --deep: #2e2b26; --wit: #2a2723; --border: #4a453d;
+  --terra: #d9736a; --green: #7fae92;
+  --g1: #3c5a49; --g2: #5f8a70; --g3: #8fb59a; --g4: #c2d4c6;
+  --raster: #3a352e;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light dark; }
+body {
+  margin: 0; background: var(--cream); color: var(--ink);
+  font: 15px/1.55 "Open Sans", -apple-system, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+main { max-width: 1180px; margin: 0 auto; padding: 30px 24px 90px; }
+
+.kicker { font-size: 11px; font-weight: 700; letter-spacing: .16em;
+          text-transform: uppercase; color: var(--terra); margin: 0 0 3px; }
+h1 { font-family: "Evolorahof Display", Impact, sans-serif; font-weight: 400;
+     font-size: 42px; text-transform: lowercase; margin: 0 0 8px; line-height: 1.08; }
+h1 .accent { color: var(--terra); }
+h2 { font-family: "Evolorahof Display", Impact, sans-serif; font-weight: 400;
+     font-size: 25px; text-transform: lowercase; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 8px; max-width: 660px; }
+.paneel { background: var(--wit); border: 1px solid var(--border); border-radius: 12px;
+          padding: 22px 24px 24px; margin-bottom: 20px; }
+.uitleg { font-size: 13px; color: var(--muted); margin: 0 0 16px; max-width: 780px; }
+.uitleg b { color: var(--ink); }
+.kop { display: flex; justify-content: space-between; align-items: flex-start;
+       gap: 20px; flex-wrap: wrap; margin-bottom: 22px; }
+
+/* ---- knoppen ---- */
+.knop { font: 700 12px "Open Sans", sans-serif; padding: 8px 15px; cursor: pointer;
+        border: 1px solid var(--border); border-radius: 999px;
+        background: var(--wit); color: var(--muted); }
+.knop.aan { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+
+/* ---- kerncijfers ---- */
+.cijfers { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.tegel { background: var(--wit); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+.tegel .label { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+.tegel .waarde { font-size: 34px; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
+.tegel.held .waarde { font-size: 56px; }
+.tegel .bij { font-size: 12px; color: var(--faint); margin-top: 7px; }
+.tegel.held { grid-column: span 1; }
+.tegel .waarde.let { color: var(--terra); }
+
+/* ---- legenda ---- */
+.legenda { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12.5px;
+           color: var(--muted); margin: 0 0 14px; }
+.legenda span.sleutel { display: inline-flex; align-items: center; gap: 7px; }
+.legenda i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+svg { display: block; max-width: 100%; height: auto; }
+svg text { font-family: "Open Sans", system-ui, sans-serif; }
+
+/* ---- tooltip ---- */
+#tip { position: fixed; z-index: 50; pointer-events: none; opacity: 0;
+       background: var(--ink); color: var(--cream); border-radius: 8px;
+       padding: 9px 12px; font-size: 12.5px; line-height: 1.45; max-width: 320px;
+       box-shadow: 0 6px 20px rgba(0,0,0,.18); transition: opacity .12s; }
+#tip b { color: var(--wit); }
+:root[data-modus="donker"] #tip { background: #0f0e0c; }
+
+/* ---- tabel ---- */
+table.data { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 13px;
+             font-variant-numeric: tabular-nums; }
+table.data th { text-align: left; font-size: 11px; letter-spacing: .07em;
+                text-transform: uppercase; color: var(--faint); font-weight: 700;
+                padding: 7px 10px 7px 0; border-bottom: 1px solid var(--border); }
+table.data td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--raster); vertical-align: top; }
+table.data td.num { text-align: right; }
+table.data tr.let td { background: color-mix(in srgb, var(--terra) 7%, transparent); }
+.verborgen { display: none; }
+
+.voet { font-size: 12px; color: var(--faint); line-height: 1.6; }
+.voet b { color: var(--muted); }
+/* twee panelen naast elkaar, elk zo hoog als zijn eigen inhoud */
+.tweeluik { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 860px) {
+  .cijfers { grid-template-columns: 1fr 1fr; }
+  .tweeluik { grid-template-columns: 1fr; }
+  h1 { font-size: 32px; }
+}
+</style>
+</head>
+<body data-palette="#437059,#b0463c">
+<main>
+
+  <div class="kop">
+    <div>
+      <p class="kicker">evolorahof · programma van eisen 2.0 · 26 juli 2026</p>
+      <h1><span class="accent">waar we het</span><br>over eens zijn.</h1>
+      <p class="sub">Acht ingevulde formulieren, dertig stellingen, 240 antwoorden. Dit dashboard
+      laat zien wat breed gedragen is, wat er net overheen komt, en waar de groep in tweeën ligt.
+      De antwoorden zijn per stelling door elkaar gehusseld: je ziet de verdeling, niet wie wat
+      heeft ingevuld.</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="knop" id="modus">donkere modus</button>
+      <button class="knop" id="tabelknop">toon als tabel</button>
+    </div>
+  </div>
+
+  <div class="cijfers">
+    <div class="tegel held">
+      <div class="label">van het gewicht landt op thema's die bij geen of nauwelijks een plek zijn ingevuld</div>
+      <div class="waarde let" id="cijfer-weg">·</div>
+      <div class="bij">waarvan 26,2 procent op de twee thema's die bij nul van de twaalf plekken zijn ingevuld</div>
+    </div>
+    <div class="tegel">
+      <div class="label">stellingen waar de groep samen achter staat</div>
+      <div class="waarde" id="cijfer-samen">·</div>
+      <div class="bij">hoogstens één van de acht is het oneens</div>
+    </div>
+    <div class="tegel">
+      <div class="label">stellingen die net over de sloot komen</div>
+      <div class="waarde let" id="cijfer-sloot">·</div>
+      <div class="bij">meerderheid voor, maar twee of meer tegen: valt om in een consentronde</div>
+    </div>
+    <div class="tegel">
+      <div class="label">stellingen waar de groep in tweeën ligt</div>
+      <div class="waarde let" id="cijfer-verdeeld">·</div>
+      <div class="bij">geen meerderheid, of exact vier tegen vier</div>
+    </div>
+  </div>
+
+  <!-- ================================================ 1. de consensusladder -->
+  <section class="paneel">
+    <h2>de ladder · hoe eensgezind zijn we per stelling.</h2>
+    <p class="uitleg">De hoogte is de <b>eensgezindheid</b>: één min de gemiddelde afstand tussen
+    twee willekeurige antwoorden, op de schaal van 0 tot 3. Bovenaan staat wat iedereen hetzelfde
+    invulde, of dat nu voor of tegen is. Onderaan ligt de groep in tweeën. De verticale afstand
+    tussen twee stellingen is dus echte afstand, geen rangnummer: waar de stippen ver uit elkaar
+    liggen, zit een gat. Rechts staan dezelfde stellingen op leesregels, met per stelling de acht
+    antwoorden als staafjes, van laag naar hoog gesorteerd.</p>
+    <div class="legenda" id="legenda-ladder"></div>
+    <div id="ladder"></div>
+  </section>
+
+  <!-- ============================================= 2. waar het gewicht landt -->
+  <section class="paneel">
+    <h2>waar ons gewicht landt, en of het ergens op slaat.</h2>
+    <p class="uitleg">Links wat de groep zegt te wegen, rechts bij hoeveel van de twaalf gescoorde
+    plekken dat thema daadwerkelijk is ingevuld. Een thema zonder ingevulde plekken telt in de
+    rekentool nergens mee: het gewicht wordt over de andere thema's verdeeld en verdwijnt stil.</p>
+    <div id="themas"></div>
+  </section>
+
+  <!-- ============================================================ 3. trechter -->
+  <div class="tweeluik">
+    <section class="paneel">
+      <h2>de trechter.</h2>
+      <p class="uitleg">Wat er overblijft van de twaalf gescoorde plekken als we grenzen
+      vaststellen. Let op de tweede balk: de waterknock-out verandert onze top drie niet.</p>
+      <div id="trechter"></div>
+    </section>
+
+    <section class="paneel">
+      <h2>wat niemand wil inleveren.</h2>
+      <p class="uitleg">Hoe vaak een stelling in iemands persoonlijke top vijf staat. Dit telt
+      niet mee in de gewichten en dus niet in welke plek afvalt.</p>
+      <div class="legenda">
+        <span class="sleutel"><i style="background:var(--g4);border-radius:2px"></i>het thema is bij
+          minstens één plek ingevuld</span>
+        <span class="sleutel"><i style="background:var(--terra);border-radius:2px"></i>thema nergens
+          gescoord: kan geen plek laten afvallen</span>
+      </div>
+      <div id="topvijf"></div>
+    </section>
+  </div>
+
+  <!-- =========================================================== 4. plekken -->
+  <section class="paneel">
+    <h2>de plekken, en wat we van ze weten.</h2>
+    <p class="uitleg">De stip is de score met onze eigen gewichten. De balk is de band: links wat
+    het wordt als alles wat we nog niet weten tegenvalt, rechts als het meevalt. Alle banden
+    overlappen elkaar, dus het model kan op dit moment geen enkele plek uitsluiten.</p>
+    <div id="plekken"></div>
+  </section>
+
+  <!-- ============================================================= 5. tabel -->
+  <section class="paneel verborgen" id="tabelpaneel">
+    <h2>alle dertig stellingen.</h2>
+    <p class="uitleg">Dezelfde gegevens als de ladder, zodat niets alleen in kleur of positie zit.</p>
+    <div style="overflow-x:auto"><table class="data" id="tabel"></table></div>
+  </section>
+
+  <p class="voet">
+    <b>Hoe dit is gemaakt.</b> De 240 vinkjes zijn machinaal uitgelezen uit de foto's van de
+    formulieren, op basis van de exacte hokjescoördinaten uit de formulier-pdf, en daarna alle 240
+    met het oog nagekeken. Zes afwijkingen zijn met de hand gecorrigeerd; die staan in
+    <i>14-Wat-de-ingevulde-formulieren-zeggen.md</i>. Elske heeft stelling 29 niet ingevuld, daar
+    telt de verdeling zeven antwoorden.<br>
+    <b>Wat een keuze is.</b> Eensgezindheid is hier één min de gemiddelde paarsgewijze afstand
+    gedeeld door drie. Iedereen hetzelfde is 1,00; de groep exact in tweeën op de uiteinden is 0,43.
+    De grens tussen <i>samen</i> en <i>net over de sloot</i> ligt bij twee tegenstemmers; dat is een
+    afspraak, geen meting. Themagewichten volgen de rangordemethode, waarbij per lid alleen de eigen
+    volgorde van de negen thema's telt.<br>
+    <b>Wat dit niet is.</b> Geen besluit en geen uitslag. Eén zwaarwegend bezwaar telt zwaarder dan
+    elk gemiddelde hier. Individuele profielen staan er bewust niet in; iedereen krijgt desgewenst
+    zijn eigen gegevens.
+  </p>
+</main>
+
+<div id="tip"></div>
+
+<script>
+"use strict";
+const DATA = {"stellingen": [{"nr": 1, "thema": "A", "tekst": "We sluiten elk perceel in een overstromingszone uit, ook als dat de zoekruimte langs de rivieren rond Arnhem sterk verkleint.", "gem": 2.0, "eg": 0.643, "tegen": 3, "voor": 5, "top": 3, "status": "sloot", "ant": [2, 3, 3, 2, 1, 1, 1, 3], "n": 8, "zeeft": true}, {"nr": 2, "thema": "A", "tekst": "We reserveren terrein voor wadi en waterberging zodat we piekbuien zelf opvangen, ook als dat ruimte kost die anders naar woningen of moestuin gaat.", "gem": 2.25, "eg": 0.738, "tegen": 1, "voor": 7, "top": 2, "status": "samen-voor", "ant": [3, 1, 2, 3, 3, 2, 2, 2], "n": 8, "zeeft": true}, {"nr": 3, "thema": "A", "tekst": "We kiezen een perceel met volgroeide bomen en schaduw zodat het bij hittegolven leefbaar blijft, ook als die bomen ons beperken in bouwvlak en zonopwek.", "gem": 1.62, "eg": 0.583, "tegen": 4, "voor": 4, "top": 1, "status": "verdeeld", "ant": [1, 3, 0, 2, 1, 2, 1, 3], "n": 8, "zeeft": true}, {"nr": 4, "thema": "B", "tekst": "We houden het hele terrein aan de moestuinnorm voor lood (onder 60 mg/kg) in plaats van de ruimere woonnorm (90 mg/kg), ook als dat percelen uitsluit die voor wonen prima voldoen.", "gem": 1.75, "eg": 0.69, "tegen": 2, "voor": 6, "top": 3, "status": "sloot", "ant": [1, 2, 2, 0, 2, 2, 3, 2], "n": 8, "zeeft": true}, {"nr": 5, "thema": "D", "tekst": "We vermijden een plek die sociaal of politiek omstreden ligt, ook als die daardoor juist beschikbaar en goedkoop is.", "gem": 1.38, "eg": 0.583, "tegen": 4, "voor": 4, "top": 0, "status": "verdeeld", "ant": [0, 0, 2, 1, 3, 2, 1, 2], "n": 8, "zeeft": false}, {"nr": 6, "thema": "B", "tekst": "We betalen meer voor een van nature vruchtbare bodem zodat moestuin en voedselbos snel produceren, in plaats van een arme bodem in tien jaar zelf op te bouwen.", "gem": 1.0, "eg": 0.833, "tegen": 7, "voor": 1, "top": 1, "status": "samen-tegen", "ant": [1, 2, 1, 0, 1, 1, 1, 1], "n": 8, "zeeft": true}, {"nr": 7, "thema": "B", "tekst": "We betalen sanering van bodemverontreiniging of asbest uit het gezamenlijke budget zodat de grond schoon is, ook al leveren we daarvoor in op de woningen.", "gem": 1.5, "eg": 0.738, "tegen": 3, "voor": 5, "top": 1, "status": "sloot", "ant": [0, 2, 2, 1, 1, 2, 2, 2], "n": 8, "zeeft": true}, {"nr": 8, "thema": "C", "tekst": "We houden vast aan de WHO-advieswaarde voor fijnstof, ook als we daarvoor ver van stad en snelweg moeten gaan zitten.", "gem": 1.5, "eg": 0.81, "tegen": 4, "voor": 4, "top": 0, "status": "verdeeld", "ant": [2, 2, 1, 1, 1, 1, 2, 2], "n": 8, "zeeft": true}, {"nr": 9, "thema": "C", "tekst": "We houden afstand tot intensieve veehouderij en tot bollen-, lelie- of fruitteelt, ook als de betaalbare landbouwgrond rond Arnhem juist daar ligt.", "gem": 2.62, "eg": 0.821, "tegen": 0, "voor": 8, "top": 6, "status": "samen-voor", "ant": [2, 2, 2, 3, 3, 3, 3, 3], "n": 8, "zeeft": true}, {"nr": 10, "thema": "A", "tekst": "We gebruiken het water uit onze eigen wadi en opslag om in droge zomers te besproeien, ook als dat scheve gezichten geeft bij buren die zelf geen opslag hebben.", "gem": 2.62, "eg": 0.821, "tegen": 0, "voor": 8, "top": 0, "status": "samen-voor", "ant": [2, 3, 3, 2, 3, 3, 3, 2], "n": 8, "zeeft": true}, {"nr": 11, "thema": "C", "tekst": "We kiezen voor stilte en duisternis in de nacht, ook als dat de bereikbaarheid en de levendigheid van het community center beperkt.", "gem": 1.38, "eg": 0.583, "tegen": 4, "voor": 4, "top": 1, "status": "verdeeld", "ant": [3, 2, 2, 1, 0, 1, 2, 0], "n": 8, "zeeft": true}, {"nr": 12, "thema": "D", "tekst": "We laten een perceel liggen in een buurt met hoge cijfers voor geweld en inbraak, ook als het daar het meest betaalbaar is.", "gem": 1.25, "eg": 0.476, "tegen": 4, "voor": 4, "top": 1, "status": "verdeeld", "ant": [0, 0, 3, 3, 0, 0, 2, 2], "n": 8, "zeeft": false}, {"nr": 13, "thema": "D", "tekst": "We kiezen een omgeving waar buren en dorps- of wijkraad positief tegenover ons plan staan, ook als een perceel met te verwachten bezwaren beter zou passen.", "gem": 2.0, "eg": 0.833, "tegen": 1, "voor": 7, "top": 1, "status": "samen-voor", "ant": [2, 2, 3, 2, 2, 2, 2, 1], "n": 8, "zeeft": false}, {"nr": 14, "thema": "C", "tekst": "We houden afstand tot hoogspanningsleidingen vanwege de magneetveldzone, ook als dat percelen uitsluit die verder goed en betaalbaar zijn.", "gem": 1.88, "eg": 0.679, "tegen": 3, "voor": 5, "top": 0, "status": "sloot", "ant": [3, 1, 3, 1, 1, 2, 2, 2], "n": 8, "zeeft": true}, {"nr": 15, "thema": "E", "tekst": "We kiezen nabijheid van station of bushalte zodat we minder autoafhankelijk zijn, ook als dat een duurder en drukker perceel oplevert.", "gem": 1.25, "eg": 0.738, "tegen": 5, "voor": 3, "top": 0, "status": "verdeeld", "ant": [0, 1, 1, 2, 2, 1, 2, 1], "n": 8, "zeeft": true}, {"nr": 16, "thema": "E", "tekst": "We accepteren een ligging langs een N-weg omwille van de bereikbaarheid, en nemen het verkeersgeluid daarbij op de koop toe.", "gem": 1.38, "eg": 0.726, "tegen": 4, "voor": 4, "top": 1, "status": "verdeeld", "ant": [2, 0, 1, 2, 1, 1, 2, 2], "n": 8, "zeeft": true}, {"nr": 17, "thema": "E", "tekst": "We accepteren een lange landweg als enige toegang, ook al kan die weinig verkeer aan en beperkt dat bezoek, bevoorrading en evenementen structureel.", "gem": 2.0, "eg": 0.833, "tegen": 1, "voor": 7, "top": 0, "status": "samen-voor", "ant": [1, 2, 2, 2, 3, 2, 2, 2], "n": 8, "zeeft": true}, {"nr": 18, "thema": "F", "tekst": "We beperken ons tot gemeenten met ervaring in collectief wonen zodat het traject voorspelbaar blijft, ook als dat het aantal kansrijke percelen sterk verkleint.", "gem": 0.62, "eg": 0.821, "tegen": 8, "voor": 0, "top": 1, "status": "samen-tegen", "ant": [1, 1, 1, 0, 0, 1, 0, 1], "n": 8, "zeeft": true}, {"nr": 19, "thema": "F", "tekst": "We kiezen een perceel waar we binnen drie jaar kunnen bouwen, boven een beter perceel dat zeven jaar procedure kost.", "gem": 1.38, "eg": 0.726, "tegen": 4, "voor": 4, "top": 1, "status": "verdeeld", "ant": [0, 2, 2, 1, 1, 2, 2, 1], "n": 8, "zeeft": true}, {"nr": 20, "thema": "F", "tekst": "We houden de grondprijs laag zodat de woonlasten haalbaar blijven, ook als we daarvoor verder van stad en voorzieningen gaan zitten.", "gem": 2.0, "eg": 0.833, "tegen": 1, "voor": 7, "top": 3, "status": "samen-voor", "ant": [2, 2, 1, 2, 2, 2, 2, 3], "n": 8, "zeeft": true}, {"nr": 21, "thema": "F", "tekst": "We gaan alleen achter percelen aan met een verkoopbereide eigenaar, ook als een lastiger te verwerven perceel beter zou passen.", "gem": 1.38, "eg": 0.821, "tegen": 5, "voor": 3, "top": 0, "status": "verdeeld", "ant": [1, 2, 2, 2, 1, 1, 1, 1], "n": 8, "zeeft": true}, {"nr": 22, "thema": "G", "tekst": "We slaan onze energie zelf op in batterijen en waterstof in plaats van te leunen op een zware netaansluiting, ook al kost die zelfredzaamheid meer.", "gem": 2.5, "eg": 0.738, "tegen": 1, "voor": 7, "top": 5, "status": "samen-voor", "ant": [3, 2, 1, 3, 3, 2, 3, 3], "n": 8, "zeeft": false}, {"nr": 23, "thema": "G", "tekst": "We reserveren de veiligheidszone voor waterstofopslag zodat seizoensopslag mogelijk blijft, ook als dat ruimte kost die anders naar woningen of moestuin gaat.", "gem": 2.38, "eg": 0.821, "tegen": 0, "voor": 8, "top": 0, "status": "samen-voor", "ant": [2, 2, 3, 3, 2, 3, 2, 2], "n": 8, "zeeft": false}, {"nr": 24, "thema": "G", "tekst": "We leggen een grijswatersysteem aan zodat we de toiletten met douchewater doorspoelen in plaats van drinkwater, ook al kost dat meer in aanleg en onderhoud.", "gem": 2.0, "eg": 0.643, "tegen": 3, "voor": 5, "top": 1, "status": "sloot", "ant": [2, 3, 3, 2, 1, 3, 1, 1], "n": 8, "zeeft": false}, {"nr": 25, "thema": "H", "tekst": "We kopen een groter perceel zodat reuring en rust elkaar niet in de weg zitten, ook als dat de grondkosten opdrijft.", "gem": 2.0, "eg": 0.714, "tegen": 2, "voor": 6, "top": 0, "status": "sloot", "ant": [3, 1, 3, 1, 2, 2, 2, 2], "n": 8, "zeeft": true}, {"nr": 26, "thema": "H", "tekst": "We geven voorrang aan een perceel met bebouwing die we als community center kunnen hergebruiken, ook als die bebouwing ons ontwerp daar beperkt.", "gem": 2.38, "eg": 0.726, "tegen": 1, "voor": 7, "top": 3, "status": "samen-voor", "ant": [2, 1, 3, 2, 2, 3, 3, 3], "n": 8, "zeeft": true}, {"nr": 27, "thema": "H", "tekst": "We betalen voor de mogelijkheid later uit te breiden, ook als we die ruimte de eerste tien jaar niet gebruiken.", "gem": 1.62, "eg": 0.821, "tegen": 3, "voor": 5, "top": 1, "status": "sloot", "ant": [2, 1, 2, 2, 1, 2, 1, 2], "n": 8, "zeeft": true}, {"nr": 28, "thema": "I", "tekst": "We kiezen een plek in of tegen een woonwijk zodat het community center genoeg publiek heeft, en nemen minder rust en ruimte op de koop toe.", "gem": 2.0, "eg": 1.0, "tegen": 0, "voor": 8, "top": 2, "status": "samen-voor", "ant": [2, 2, 2, 2, 2, 2, 2, 2], "n": 8, "zeeft": true}, {"nr": 29, "thema": "I", "tekst": "We kiezen nabijheid van basisonderwijs en kinderopvang, ook als dat ons tot de duurdere percelen bij dorp of stad beperkt.", "gem": 1.86, "eg": 0.905, "tegen": 1, "voor": 6, "top": 0, "status": "samen-voor", "ant": [2, 2, 2, 2, 2, 1, 2], "n": 7, "zeeft": true}, {"nr": 30, "thema": "I", "tekst": "We kiezen nabijheid van huisarts, apotheek en supermarkt, ook als we daarmee het open buitengebied uitsluiten.", "gem": 1.5, "eg": 0.81, "tegen": 4, "voor": 4, "top": 2, "status": "verdeeld", "ant": [1, 2, 2, 1, 2, 2, 1, 1], "n": 8, "zeeft": true}], "themas": [{"code": "A", "naam": "water en klimaat", "gewicht": 16.7, "dekking": 12}, {"code": "B", "naam": "bodem en ondergrond", "gewicht": 7.2, "dekking": 3}, {"code": "C", "naam": "lucht, geluid en hinder", "gewicht": 12.9, "dekking": 7}, {"code": "D", "naam": "sociale omgeving en veiligheid", "gewicht": 10.4, "dekking": 0}, {"code": "E", "naam": "bereikbaarheid en ontsluiting", "gewicht": 5.3, "dekking": 10}, {"code": "F", "naam": "planologie, bestuur en verwerving", "gewicht": 6.4, "dekking": 12}, {"code": "G", "naam": "energie en nutsinfrastructuur", "gewicht": 15.8, "dekking": 0}, {"code": "H", "naam": "perceel en programmapassing", "gewicht": 13.6, "dekking": 1}, {"code": "I", "naam": "voorzieningen en exploitatie", "gewicht": 11.7, "dekking": 4}], "trechter": [{"naam": "geen grens", "over": 12, "toel": "alle gescoorde kandidaten", "beste": "Landgoederen Rheden/Rozendaal", "bestescore": 82}, {"naam": "K7 water", "over": 7, "toel": "Betuwe en rivieroever vallen af", "beste": "Landgoederen Rheden/Rozendaal", "bestescore": 82}, {"naam": "K2 en K8", "over": 8, "toel": "stikstof en de eis van drie jaar halen de Veluweflank weg", "beste": "Het Dorp (Siza)", "bestescore": 74}, {"naam": "alle drie", "over": 3, "toel": "alleen bestaand stedelijk gebied blijft over", "beste": "Het Dorp (Siza)", "bestescore": 74}], "plekken": [{"naam": "Landgoederen Rheden/Rozendaal", "score": 82.0, "onder": 33.8, "boven": 92.6, "dek": 4, "soort": "kandidaat", "grens": "K2, K8"}, {"naam": "Pro Persona-terrein Wolfheze", "score": 80.2, "onder": 44.0, "boven": 89.1, "dek": 5, "soort": "kandidaat", "grens": "K2, K8"}, {"naam": "VAB-/dorpsrand-erven Renkum", "score": 78.0, "onder": 32.2, "boven": 90.9, "dek": 4, "soort": "kandidaat", "grens": "K2, K8"}, {"naam": "archetype a · de veluwerand", "score": 74.9, "onder": 45.1, "boven": 84.9, "dek": 6, "soort": "archetype", "grens": ""}, {"naam": "Het Dorp (Siza)", "score": 73.9, "onder": 39.1, "boven": 86.2, "dek": 5, "soort": "kandidaat", "grens": ""}, {"naam": "Dorpsranden Rheden (Dieren-Spankeren, De Beemd Velp)", "score": 63.3, "onder": 26.1, "boven": 84.9, "dek": 4, "soort": "kandidaat", "grens": "K2, K8"}, {"naam": "Rijnpark Arnhem-Oost (NOVEX)", "score": 62.9, "onder": 33.3, "boven": 80.4, "dek": 5, "soort": "kandidaat", "grens": "K7"}, {"naam": "archetype c · binnenstedelijk aan het spoor", "score": 62.6, "onder": 37.7, "boven": 77.5, "dek": 6, "soort": "archetype", "grens": ""}, {"naam": "archetype b · de betuwepolder", "score": 62.0, "onder": 37.3, "boven": 77.1, "dek": 6, "soort": "archetype", "grens": ""}, {"naam": "BAT-terrein / Enghuizen", "score": 60.3, "onder": 17.1, "boven": 88.8, "dek": 3, "soort": "kandidaat", "grens": ""}, {"naam": "Collectief-wonen-locaties Arnhem (10)", "score": 58.2, "onder": 23.3, "boven": 83.3, "dek": 4, "soort": "kandidaat", "grens": ""}, {"naam": "Lingezicht / Westeraam Elst", "score": 57.4, "onder": 27.1, "boven": 79.9, "dek": 5, "soort": "kandidaat", "grens": "K7"}, {"naam": "Zandsestraat Bemmel", "score": 47.5, "onder": 14.4, "boven": 84.1, "dek": 3, "soort": "kandidaat", "grens": "K7"}, {"naam": "De Ploen-Noord", "score": 45.6, "onder": 12.9, "boven": 84.6, "dek": 3, "soort": "kandidaat", "grens": "K7"}, {"naam": "Smurfit Kappa Parenco", "score": 25.0, "onder": 10.8, "boven": 67.6, "dek": 4, "soort": "kandidaat", "grens": "K7"}], "leden": 8, "kop": {"weg": 26.2, "dun": 20.8, "stippen": 48, "gescoord": 12}};
+
+/* ---------------------------------------------------------------- basis */
+const el = (id) => document.getElementById(id);
+const svgNS = "http://www.w3.org/2000/svg";
+const maak = (naam, kenmerken = {}) => {
+  const knoop = document.createElementNS(svgNS, naam);
+  for (const [k, v] of Object.entries(kenmerken)) knoop.setAttribute(k, v);
+  return knoop;
+};
+const kort = (tekst, lengte) =>
+  tekst.length <= lengte ? tekst : tekst.slice(0, lengte - 1).replace(/[ ,.]+$/, "") + "…";
+
+// Status bepaalt kleur en vulling. Kleur zegt: zijn we het eens of niet.
+// Vulling zegt: is de meerderheid voor of tegen. Nooit kleur alleen: er staat
+// altijd een legenda, een label en de acht stippen zelf naast.
+const STATUS = {
+  "samen-voor":  { kleur: "var(--green)", vol: true,  naam: "samen voor" },
+  "samen-tegen": { kleur: "var(--green)", vol: false, naam: "samen tegen" },
+  "sloot":       { kleur: "var(--terra)", vol: true,  naam: "net over de sloot" },
+  "verdeeld":    { kleur: "var(--terra)", vol: false, naam: "in tweeën" },
+};
+
+/* -------------------------------------------------------------- tooltip */
+const tip = el("tip");
+function toonTip(gebeurtenis, html) {
+  tip.innerHTML = html;
+  tip.style.opacity = 1;
+  const marge = 14;
+  const breedte = tip.offsetWidth, hoogte = tip.offsetHeight;
+  let x = gebeurtenis.clientX + marge, y = gebeurtenis.clientY + marge;
+  if (x + breedte > innerWidth - 8) x = gebeurtenis.clientX - breedte - marge;
+  if (y + hoogte > innerHeight - 8) y = gebeurtenis.clientY - hoogte - marge;
+  tip.style.left = x + "px";
+  tip.style.top = y + "px";
+}
+const verbergTip = () => { tip.style.opacity = 0; };
+function koppelTip(knoop, html) {
+  knoop.style.cursor = "default";
+  knoop.addEventListener("mousemove", (g) => toonTip(g, html));
+  knoop.addEventListener("mouseleave", verbergTip);
+}
+
+/* ------------------------------------------------------------ kerncijfers */
+function kerncijfers() {
+  const tel = (s) => DATA.stellingen.filter((r) => r.status === s).length;
+  el("cijfer-weg").textContent = (DATA.kop.weg + DATA.kop.dun).toFixed(0).replace(".", ",") + "%";
+  el("cijfer-samen").textContent = tel("samen-voor") + tel("samen-tegen");
+  el("cijfer-sloot").textContent = tel("sloot");
+  el("cijfer-verdeeld").textContent = tel("verdeeld");
+}
+
+/* ------------------------------------------------------- 1. de ladder ---- */
+// Links de echte schaal: elke stelling op zijn werkelijke hoogte, opzij geschoven
+// waar stippen elkaar raken. Daar lees je de afstanden en de gaten. Rechts dezelfde
+// stellingen op gelijke regelafstand, leesbaar. Aanwijzen licht beide op.
+function ladder() {
+  const rijen = [...DATA.stellingen].sort((a, b) => b.eg - a.eg || b.gem - a.gem);
+  const RH = 31, BOVEN = 30, ONDER = 20;
+  const XAS = 142, XZWERM = 160, ZWERM = 74;         // linkerblok: as en zwerm
+  const XNR = 268, XSTRIP = 282, XTEKST = 372;        // rechterblok
+  const breedte = 1108;
+  const plot = rijen.length * RH;
+  const hoogte = BOVEN + plot + ONDER;
+
+  const laag = 0.42, hoog = 1.02;
+  const yEcht = (eg) => BOVEN + (hoog - eg) / (hoog - laag) * plot;
+
+  // Zwerm: stippen die binnen 11 px van elkaar liggen krijgen een stapje opzij.
+  const geplaatst = [];
+  rijen.forEach((r) => {
+    r._y = yEcht(r.eg);
+    let stap = 0;
+    while (geplaatst.some((p) => Math.abs(p.y - r._y) < 11 && p.stap === stap)) stap += 1;
+    r._stap = stap;
+    geplaatst.push({ y: r._y, stap });
+  });
+  const maxStap = Math.max(...rijen.map((r) => r._stap), 1);
+  const dx = Math.min(13, ZWERM / (maxStap + 1));
+
+  const svg = maak("svg", { viewBox: `0 0 ${breedte} ${hoogte}`, width: breedte, height: hoogte,
+                            role: "img", "aria-label": "eensgezindheid per stelling" });
+
+  // as van het linkerblok
+  [[1.0, "iedereen hetzelfde"], [0.9, ""], [0.8, ""], [0.7, "flink verschil"],
+   [0.6, ""], [0.5, ""], [0.43, "precies in tweeën"]].forEach(([waarde, naam]) => {
+    const y = yEcht(waarde);
+    svg.appendChild(maak("line", { x1: XAS - 2, x2: XZWERM + ZWERM, y1: y, y2: y,
+      stroke: "var(--raster)", "stroke-width": 1 }));
+    const t = maak("text", { x: XAS - 8, y: y + 4, "text-anchor": "end",
+      "font-size": 11, fill: "var(--faint)" });
+    t.textContent = Math.round(waarde * 100) + "%";
+    svg.appendChild(t);
+    if (naam) {
+      const n = maak("text", { x: XAS - 8, y: y + 16, "text-anchor": "end",
+        "font-size": 10, fill: "var(--faint)" });
+      n.textContent = naam;
+      svg.appendChild(n);
+    }
+  });
+  const kopAs = maak("text", { x: XAS - 8, y: 14, "text-anchor": "end", "font-size": 11,
+    fill: "var(--faint)" });
+  kopAs.textContent = "EENSGEZINDHEID";
+  svg.appendChild(kopAs);
+  const kopLijst = maak("text", { x: XSTRIP, y: 14, "font-size": 11, fill: "var(--faint)" });
+  kopLijst.textContent = "ERG ONEENS  →  ERG EENS";
+  svg.appendChild(kopLijst);
+
+  rijen.forEach((r, i) => {
+    const s = STATUS[r.status];
+    const yRij = BOVEN + i * RH + RH / 2;
+
+    // ---- linkerblok: stip op de echte hoogte
+    const stip = maak("circle", { cx: XZWERM + r._stap * dx, cy: r._y, r: 5,
+      fill: s.vol ? s.kleur : "var(--wit)", stroke: s.kleur, "stroke-width": 2 });
+    svg.appendChild(stip);
+
+    // ---- rechterblok
+    const nr = maak("text", { x: XNR, y: yRij + 4, "font-size": 11.5,
+      fill: "var(--faint)", "text-anchor": "end" });
+    nr.textContent = r.nr;
+    svg.appendChild(nr);
+
+    // acht staafjes, gesorteerd van laag naar hoog: vlak is eensgezind,
+    // een trap betekent dat de groep uiteenloopt
+    const gesorteerd = [...r.ant].sort((a, b) => a - b);
+    const basis = yRij + 8, staaf = 7.4;
+    gesorteerd.forEach((a, k) => {
+      const h = 3 + a * 4.2;
+      svg.appendChild(maak("rect", { x: XSTRIP + k * staaf, y: basis - h,
+        width: staaf - 2, height: h, rx: 1.5, fill: s.kleur,
+        opacity: a <= 1 ? .45 : .95 }));
+    });
+    svg.appendChild(maak("line", { x1: XSTRIP, x2: XSTRIP + 8 * staaf - 2, y1: basis + 1.5,
+      y2: basis + 1.5, stroke: "var(--raster)", "stroke-width": 1 }));
+
+    const tekst = maak("text", { x: XTEKST, y: yRij + 4, "font-size": 12.5, fill: "var(--ink)" });
+    tekst.textContent = kort(r.tekst, 92);
+    svg.appendChild(tekst);
+
+    const telkop = maak("text", { x: breedte - 14, y: yRij + 4, "font-size": 11.5,
+      fill: "var(--muted)", "text-anchor": "end" });
+    telkop.textContent = `${r.voor} voor · ${r.tegen} tegen`;
+    svg.appendChild(telkop);
+
+    // trefvlak over de hele regel; aanwijzen licht ook de stip links op
+    const vlak = maak("rect", { x: XNR - 22, y: yRij - RH / 2, width: breedte - XNR + 14,
+      height: RH, fill: "transparent" });
+    svg.appendChild(vlak);
+    const html = `<b>Stelling ${r.nr}</b> · thema ${r.thema}<br>${r.tekst}<br><br>
+      eensgezindheid <b>${(r.eg * 100).toFixed(0)}%</b> · gemiddelde <b>${r.gem.toFixed(2)
+      .replace(".", ",")}</b><br>${r.voor} voor, ${r.tegen} tegen${r.n < 8 ? ` (${r.n} ingevuld)` : ""}
+      <br>${s.naam}${r.top ? `<br>in ${r.top} van de 8 topvijven` : ""}
+      ${r.zeeft ? "" : "<br><i>thema nergens gescoord: deze stelling kan geen plek laten afvallen</i>"}`;
+    koppelTip(vlak, html);
+    koppelTip(stip, html);
+    [vlak, stip].forEach((knoop) => {
+      knoop.addEventListener("mouseenter", () => stip.setAttribute("r", 8));
+      knoop.addEventListener("mouseleave", () => stip.setAttribute("r", 5));
+    });
+  });
+
+  el("ladder").appendChild(svg);
+
+  el("legenda-ladder").innerHTML = Object.values(STATUS).map((s) =>
+    `<span class="sleutel"><i style="background:${s.vol ? s.kleur : "transparent"};
+      box-shadow: inset 0 0 0 2px ${s.kleur}"></i>${s.naam}</span>`).join("")
+    + `<span class="sleutel" style="color:var(--faint)">de acht staafjes zijn de acht antwoorden,
+       laag naar hoog gesorteerd: vlak is eensgezind, een trap betekent verdeeld</span>`;
+}
+
+/* --------------------------------------------- 2. gewicht tegenover dekking */
+function themas() {
+  const rijen = [...DATA.themas].sort((a, b) => b.gewicht - a.gewicht);
+  const RH = 44, MARGE = 24, X = 306, BALK = 396, breedte = 1108;
+  const hoogte = MARGE + rijen.length * RH + 16;
+  const maxGewicht = Math.max(...rijen.map((r) => r.gewicht));
+  const svg = maak("svg", { viewBox: `0 0 ${breedte} ${hoogte}`, width: breedte, height: hoogte,
+                            role: "img", "aria-label": "gewicht per thema tegenover dekking" });
+
+  const kop1 = maak("text", { x: X, y: 14, "font-size": 11, fill: "var(--faint)" });
+  kop1.textContent = "GEWICHT VAN DE GROEP";
+  svg.appendChild(kop1);
+  const kop2 = maak("text", { x: X + BALK + 96, y: 14, "font-size": 11, fill: "var(--faint)" });
+  kop2.textContent = "BIJ HOEVEEL VAN DE TWAALF PLEKKEN INGEVULD";
+  svg.appendChild(kop2);
+
+  rijen.forEach((r, i) => {
+    const y = MARGE + i * RH + 14;
+    const leeg = r.dekking === 0;
+    const dun = r.dekking > 0 && r.dekking <= 3;
+    const kleur = leeg ? "var(--terra)" : dun ? "var(--g2)" : "var(--g4)";
+
+    const naam = maak("text", { x: X - 12, y: y + 5, "text-anchor": "end",
+      "font-size": 13, fill: "var(--ink)" });
+    naam.textContent = `${r.code} · ${r.naam}`;
+    svg.appendChild(naam);
+
+    const w = (r.gewicht / maxGewicht) * BALK;
+    const balk = maak("rect", { x: X, y: y - 8, width: Math.max(w, 2), height: 16,
+      rx: 4, fill: kleur });
+    balk.setAttribute("rx", 4);
+    svg.appendChild(balk);
+    // vierkante aanzet op de nullijn
+    svg.appendChild(maak("rect", { x: X, y: y - 8, width: 4, height: 16, fill: kleur }));
+
+    const waarde = maak("text", { x: X + w + 9, y: y + 5, "font-size": 12.5, fill: "var(--muted)" });
+    waarde.textContent = r.gewicht.toFixed(1).replace(".", ",");
+    svg.appendChild(waarde);
+
+    // dekkingsstrip: twaalf vakjes, gevuld wat gescoord is
+    const dx = X + BALK + 96;
+    for (let k = 0; k < 12; k++) {
+      svg.appendChild(maak("rect", { x: dx + k * 13, y: y - 6, width: 9, height: 12, rx: 2,
+        fill: k < r.dekking ? kleur : "var(--raster)" }));
+    }
+    const dtekst = maak("text", { x: dx + 12 * 13 + 8, y: y + 5, "font-size": 12.5,
+      fill: leeg ? "var(--terra)" : "var(--muted)" });
+    dtekst.textContent = leeg ? "nergens" : `${r.dekking} van 12`;
+    svg.appendChild(dtekst);
+
+    const vlak = maak("rect", { x: 0, y: y - RH / 2 + 4, width: breedte, height: RH - 6,
+      fill: "transparent" });
+    svg.appendChild(vlak);
+    koppelTip(vlak, `<b>${r.code} · ${r.naam}</b><br>gewicht ${r.gewicht.toFixed(1)
+      .replace(".", ",")} van 100<br>${leeg
+        ? "bij geen enkele plek ingevuld: dit gewicht verdwijnt volledig uit de berekening"
+        : `ingevuld bij ${r.dekking} van de 12 gescoorde plekken`}`);
+  });
+  el("themas").appendChild(svg);
+}
+
+/* ---------------------------------------------------------- 3. de trechter */
+function trechter() {
+  const rijen = DATA.trechter;
+  const RH = 62, X = 8, BALK = 320, breedte = 600;
+  const hoogte = rijen.length * RH + 10;
+  const maxOver = Math.max(...rijen.map((r) => r.over));
+  const ramp = ["var(--g1)", "var(--g2)", "var(--g3)", "var(--g4)"];
+  const svg = maak("svg", { viewBox: `0 0 ${breedte} ${hoogte}`, width: breedte, height: hoogte,
+                            role: "img", "aria-label": "aantal plekken dat overblijft per grens" });
+
+  rijen.forEach((r, i) => {
+    const y = i * RH + 22;
+    const naam = maak("text", { x: X, y: y - 6, "font-size": 13, fill: "var(--ink)",
+      "font-weight": 600 });
+    naam.textContent = r.naam;
+    svg.appendChild(naam);
+
+    const w = (r.over / maxOver) * BALK;
+    svg.appendChild(maak("rect", { x: X, y: y + 2, width: Math.max(w, 3), height: 18,
+      rx: 4, fill: ramp[i] }));
+    svg.appendChild(maak("rect", { x: X, y: y + 2, width: 4, height: 18, fill: ramp[i] }));
+
+    const waarde = maak("text", { x: X + w + 12, y: y + 16, "font-size": 15,
+      fill: "var(--ink)", "font-weight": 600 });
+    waarde.textContent = r.over;
+    const bij = maak("tspan", { "font-size": 12, "font-weight": 400, fill: "var(--muted)" });
+    bij.textContent = "  plekken over";
+    waarde.appendChild(bij);
+    svg.appendChild(waarde);
+
+    const toel = maak("text", { x: X, y: y + 36, "font-size": 11.5, fill: "var(--faint)" });
+    toel.textContent = r.toel;
+    svg.appendChild(toel);
+
+    const vlak = maak("rect", { x: 0, y: y - 18, width: breedte, height: RH - 4, fill: "transparent" });
+    svg.appendChild(vlak);
+    koppelTip(vlak, `<b>${r.naam}</b><br>${r.over} van de 12 gescoorde plekken blijven over<br>
+      hoogste score: ${r.beste} (${r.bestescore})`);
+  });
+  el("trechter").appendChild(svg);
+}
+
+/* ------------------------------------------------------------ 4. top vijf */
+function topvijf() {
+  const rijen = DATA.stellingen.filter((r) => r.top > 0).sort((a, b) => b.top - a.top || a.nr - b.nr);
+  const RH = 26, X = 34, BALK = 104, breedte = 520;
+  const hoogte = rijen.length * RH + 14;
+  const svg = maak("svg", { viewBox: `0 0 ${breedte} ${hoogte}`, width: breedte, height: hoogte,
+                            role: "img", "aria-label": "hoe vaak een stelling in een top vijf staat" });
+
+  rijen.forEach((r, i) => {
+    const y = i * RH + 16;
+    const nr = maak("text", { x: X - 8, y: y + 4, "text-anchor": "end", "font-size": 11.5,
+      fill: "var(--faint)" });
+    nr.textContent = r.nr;
+    svg.appendChild(nr);
+
+    const w = (r.top / 8) * BALK;
+    const kleur = r.zeeft ? "var(--g4)" : "var(--terra)";
+    svg.appendChild(maak("rect", { x: X, y: y - 6, width: Math.max(w, 3), height: 12, rx: 4, fill: kleur }));
+    svg.appendChild(maak("rect", { x: X, y: y - 6, width: 4, height: 12, fill: kleur }));
+
+    const waarde = maak("text", { x: X + w + 9, y: y + 4, "font-size": 12, fill: "var(--muted)" });
+    waarde.textContent = `${r.top}×`;
+    svg.appendChild(waarde);
+
+    const tekst = maak("text", { x: X + BALK + 44, y: y + 4, "font-size": 12, fill: "var(--ink)" });
+    tekst.textContent = kort(r.tekst, 42);
+    svg.appendChild(tekst);
+
+    const vlak = maak("rect", { x: 0, y: y - 13, width: breedte, height: RH - 2, fill: "transparent" });
+    svg.appendChild(vlak);
+    koppelTip(vlak, `<b>Stelling ${r.nr}</b> · thema ${r.thema}<br>${r.tekst}<br><br>
+      in <b>${r.top}</b> van de 8 topvijven${r.zeeft ? ""
+        : "<br><i>thema nergens gescoord: telt niet mee in welke plek afvalt</i>"}`);
+  });
+  el("topvijf").appendChild(svg);
+}
+
+/* ------------------------------------------------------------- 5. plekken */
+function plekken() {
+  const rijen = DATA.plekken;
+  const RH = 30, X = 300, BALK = 620, breedte = 1108;
+  const hoogte = rijen.length * RH + 40;
+  const svg = maak("svg", { viewBox: `0 0 ${breedte} ${hoogte}`, width: breedte, height: hoogte,
+                            role: "img", "aria-label": "score en onzekerheidsband per plek" });
+
+  [0, 25, 50, 75, 100].forEach((waarde) => {
+    const x = X + (waarde / 100) * BALK;
+    svg.appendChild(maak("line", { x1: x, x2: x, y1: 22, y2: hoogte - 22,
+      stroke: "var(--raster)", "stroke-width": 1 }));
+    const t = maak("text", { x, y: 14, "text-anchor": "middle", "font-size": 11, fill: "var(--faint)" });
+    t.textContent = waarde;
+    svg.appendChild(t);
+  });
+
+  rijen.forEach((r, i) => {
+    const y = 34 + i * RH;
+    const isArch = r.soort === "archetype";
+    const naam = maak("text", { x: X - 12, y: y + 4, "text-anchor": "end", "font-size": 12.5,
+      fill: isArch ? "var(--muted)" : "var(--ink)",
+      "font-style": isArch ? "italic" : "normal" });
+    naam.textContent = kort(r.naam, 40);
+    svg.appendChild(naam);
+
+    const x1 = X + (r.onder / 100) * BALK, x2 = X + (r.boven / 100) * BALK;
+    const kleur = r.grens ? "var(--terra)" : "var(--g4)";
+    svg.appendChild(maak("rect", { x: x1, y: y - 5, width: x2 - x1, height: 10, rx: 5,
+      fill: kleur, opacity: .16 }));
+    const stip = maak("circle", { cx: X + (r.score / 100) * BALK, cy: y, r: 5,
+      fill: kleur, stroke: "var(--wit)", "stroke-width": 2 });
+    svg.appendChild(stip);
+
+    const waarde = maak("text", { x: x2 + 10, y: y + 4, "font-size": 12, fill: "var(--muted)" });
+    waarde.textContent = `${Math.round(r.score)} · ${r.dek}/9 thema's`
+      + (r.grens ? ` · valt af op ${r.grens}` : "");
+    svg.appendChild(waarde);
+
+    const vlak = maak("rect", { x: 0, y: y - 14, width: breedte, height: RH - 2, fill: "transparent" });
+    svg.appendChild(vlak);
+    koppelTip(vlak, `<b>${r.naam}</b><br>score ${Math.round(r.score)} met onze eigen gewichten<br>
+      band ${Math.round(r.onder)} tot ${Math.round(r.boven)}, op ${r.dek} van de 9 thema's<br>
+      ${r.grens ? `valt af op ${r.grens}` : "raakt geen van de besproken grenzen"}`);
+  });
+  el("plekken").appendChild(svg);
+}
+
+/* --------------------------------------------------------------- 6. tabel */
+function tabel() {
+  const rijen = [...DATA.stellingen].sort((a, b) => b.eg - a.eg || b.gem - a.gem);
+  el("tabel").innerHTML =
+    `<tr><th>nr</th><th>thema</th><th>stelling</th><th class="num">eensgezind</th>
+     <th class="num">gemiddeld</th><th class="num">voor</th><th class="num">tegen</th>
+     <th class="num">top vijf</th><th>oordeel</th><th>zeeft</th></tr>` +
+    rijen.map((r) => `<tr class="${r.status === "sloot" || r.status === "verdeeld" ? "let" : ""}">
+      <td class="num">${r.nr}</td><td>${r.thema}</td><td>${r.tekst}</td>
+      <td class="num">${(r.eg * 100).toFixed(0)}%</td>
+      <td class="num">${r.gem.toFixed(2).replace(".", ",")}</td>
+      <td class="num">${r.voor}</td><td class="num">${r.tegen}</td>
+      <td class="num">${r.top || "—"}</td><td>${STATUS[r.status].naam}</td>
+      <td>${r.zeeft ? "ja" : "nee"}</td></tr>`).join("");
+}
+
+/* ------------------------------------------------------------- bediening */
+el("modus").addEventListener("click", () => {
+  const donker = document.documentElement.dataset.modus === "donker";
+  document.documentElement.dataset.modus = donker ? "licht" : "donker";
+  el("modus").textContent = donker ? "donkere modus" : "lichte modus";
+});
+el("tabelknop").addEventListener("click", () => {
+  const paneel = el("tabelpaneel");
+  paneel.classList.toggle("verborgen");
+  el("tabelknop").classList.toggle("aan");
+  if (!paneel.classList.contains("verborgen")) paneel.scrollIntoView({ behavior: "smooth" });
+});
+
+kerncijfers();
+ladder();
+themas();
+trechter();
+topvijf();
+plekken();
+tabel();
+</script>
+</body>
+</html>

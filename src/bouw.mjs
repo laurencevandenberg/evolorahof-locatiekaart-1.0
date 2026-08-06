@@ -19,13 +19,17 @@ import { bouwStijl, lettertype } from './stijl.mjs';
 import { bouwPagina } from './sjabloon.mjs';
 import {
   groepsgewicht, perStelling, perLocatie, trechter as trechterCijfers,
-  themadekking, kerncijfers,
+  themadekking, kerncijfers, wegingsverschil, kandidaatoverzicht, leadoverzicht,
 } from './bereken.mjs';
 import { ladder } from './panelen/ladder.mjs';
 import { themas as themapaneel } from './panelen/themas.mjs';
 import { trechter as trechterpaneel } from './panelen/trechter.mjs';
 import { topvijf as topvijfpaneel } from './panelen/topvijf.mjs';
 import { plekken as plekkenpaneel } from './panelen/plekken.mjs';
+import { wegingen as wegingenpaneel } from './panelen/wegingen.mjs';
+import { kandidaten as kandidatenpaneel } from './panelen/kandidaten.mjs';
+import { leads as leadspaneel } from './panelen/leads.mjs';
+import { bouwKaart } from './kaart.mjs';
 
 const WORTEL = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -55,6 +59,9 @@ export function bouw({ methode = null, doel = 'dist/index.html' } = {}) {
     .map((l) => ({ ...l, aantalThemas: inhoud.themas.length }));
   const scenarios = trechterCijfers(inhoud, gewicht);
   const cijfers = kerncijfers(inhoud, gewicht, stellingen);
+  const verschillen = wegingsverschil(inhoud.scoremodel, inhoud.themas, gewicht);
+  const overzicht = kandidaatoverzicht(inhoud.kandidaten);
+  const zones = leadoverzicht(inhoud.leads);
 
   const aantalKandidaten = inhoud.locaties.filter((l) => l.soort !== 'archetype').length;
 
@@ -81,6 +88,9 @@ export function bouw({ methode = null, doel = 'dist/index.html' } = {}) {
     trechter: trechterpaneel(scenarios),
     topvijf: topvijfpaneel(stellingen, { aantalLeden: inhoud.leden.length }),
     plekken: plekkenpaneel(locaties, { breedte: breed }),
+    wegingen: wegingenpaneel(verschillen, { breedte: breed }),
+    kandidaten: kandidatenpaneel(inhoud.kandidaten, { breedte: breed }),
+    leads: leadspaneel(zones, { breedte: breed, totaal: inhoud.leads.length }),
   };
 
   // ------------------------------------------------------------------ pagina
@@ -89,7 +99,17 @@ export function bouw({ methode = null, doel = 'dist/index.html' } = {}) {
   mkdirSync(dirname(pad), { recursive: true });
   writeFileSync(pad, html, 'utf8');
 
-  return { pad, html, gewicht, stellingen, locaties, scenarios, cijfers, dekking, inhoud };
+  // De kaart is een tweede pagina, want die heeft internet nodig voor de tegels.
+  // Themascores koppelen we op id, zodat een kandidaat die ook in 07-locaties.md staat
+  // zijn score meekrijgt in de popup.
+  const locatiescores = new Map(
+    locaties.filter((l) => l.score !== null).map((l) => [l.id, l.score]));
+  const kaartHtml = bouwKaart({ inhoud, locatiescores, css });
+  const kaartPad = join(dirname(pad), 'kaart.html');
+  writeFileSync(kaartPad, kaartHtml, 'utf8');
+
+  return { pad, html, kaartPad, kaartHtml, gewicht, stellingen, locaties, scenarios,
+    cijfers, dekking, verschillen, overzicht, zones, inhoud };
 }
 
 // Alleen uitvoeren als dit bestand rechtstreeks wordt aangeroepen, niet bij importeren.
@@ -104,6 +124,12 @@ if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import
     console.log(`  stellingen       ${uitkomst.stellingen.length}`);
     console.log(`  plekken          ${uitkomst.locaties.length}`);
     console.log(`  gewicht zonder dekking  ${uitkomst.cijfers.zonderDekking.toFixed(1)}%`);
+    console.log(`  kandidaten       ${uitkomst.overzicht.totaal}` +
+      ` (${uitkomst.overzicht.metThemascores} met themascores)`);
+    console.log(`  perceel-leads    ${uitkomst.inhoud.leads.length}`);
+    console.log(`  grootste wegingsverschil  thema ${uitkomst.verschillen[0].code}` +
+      `, ${uitkomst.verschillen[0].verschil.toFixed(1)} punten`);
+    console.log(`ook gebouwd: ${uitkomst.kaartPad.split('/').slice(-2).join('/')}`);
   } catch (fout) {
     console.error(`\nBouw gestopt.\n  ${fout.message}\n`);
     process.exitCode = 1;

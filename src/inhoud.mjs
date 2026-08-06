@@ -65,6 +65,9 @@ export function laadInhoud(wortel) {
   const grenzenBestand = bestand(wortel, '06-knock-outs.md');
   const locatiesBestand = bestand(wortel, '07-locaties.md');
   const verantwoording = bestand(wortel, '08-verantwoording.md');
+  const kandidatenBestand = bestand(wortel, '09-kandidaten.md');
+  const leadsBestand = bestand(wortel, '10-perceel-leads.md');
+  const scoremodelBestand = bestand(wortel, '11-scoremodel.md');
 
   // ---------------------------------------------------------------- thema's
   const themas = themasBestand.tabellen[0].map((rij) => ({
@@ -169,6 +172,75 @@ export function laadInhoud(wortel) {
     naam: rij.naam, grenzen: lijst(rij.grenzen), toelichting: rij.toelichting ?? '',
   }));
 
+  // -------------------------------------------------- kandidaten uit de verkenning
+  // Een kandidaat mag dezelfde id hebben als een plek in 07-locaties.md. Zo ja, dan
+  // heeft hij ook themascores; zo niet, dan staat hij wel op de kaart maar telt hij
+  // nergens in mee. Dat verschil zichtbaar maken is een van de doelen van dit bestand.
+  const gescoordeIds = new Set(locaties.map((l) => l.id));
+  const kandidaten = kandidatenBestand.tabellen[0].map((rij) => ({
+    id: rij.id,
+    regio: rij.regio,
+    naam: rij.locatie,
+    gemeente: rij.gemeente,
+    categorie: rij.categorie,
+    vertrouwen: rij.vertrouwen,
+    spoor: rij.spoor,
+    prioriteit: rij.prioriteit,
+    omvang: rij.omvang,
+    status: rij.status,
+    waarom: rij['waarom past het'] ?? '',
+    contact: rij.contact ?? '',
+    bron: rij.bron ?? '',
+    lat: Number(rij.lat),
+    lon: Number(rij.lon),
+    heeftThemascores: gescoordeIds.has(rij.id),
+  }));
+  for (const kandidaat of kandidaten) {
+    if (!Number.isFinite(kandidaat.lat) || !Number.isFinite(kandidaat.lon)) {
+      throw new InhoudFout('inhoud/09-kandidaten.md', 0,
+        `${kandidaat.id} heeft geen bruikbare coordinaten`);
+    }
+  }
+
+  // ------------------------------------------------------------ perceel-leads
+  const leads = leadsBestand.tabellen[0].map((rij) => ({
+    id: rij.id,
+    regio: rij.regio,
+    zoekzone: rij.zoekzone,
+    aanduiding: rij['kadastrale aanduiding'],
+    hectare: Number(rij['opp (ha)']),
+    lat: Number(rij.lat),
+    lon: Number(rij.lon),
+    spoor: rij.spoor,
+  }));
+
+  // --------------------------------------------------------------- scoremodel
+  const themacodesLijst = themas.map((t) => t.code);
+  const scoremodel = scoremodelBestand.tabellen[0].map((rij) => {
+    const thema = rij['pve-thema'];
+    if (!themacodesLijst.includes(thema)) {
+      throw new InhoudFout('inhoud/11-scoremodel.md', 0,
+        `criterium "${rij.criterium}" verwijst naar thema "${thema}", dat niet bestaat`);
+    }
+    return {
+      criterium: rij.criterium,
+      wegingA: Number(rij['weging A']),
+      wegingB: Number(rij['weging B']),
+      thema,
+      meten: rij['meten via'] ?? '',
+    };
+  });
+  for (const [naam, sleutel] of [['A', 'wegingA'], ['B', 'wegingB']]) {
+    const som = scoremodel.reduce((totaal, rij) => totaal + rij[sleutel], 0);
+    if (Math.abs(som - 1) > 0.005) {
+      throw new InhoudFout('inhoud/11-scoremodel.md', 0,
+        `weging ${naam} telt op tot ${som.toFixed(3)} in plaats van 1,000`);
+    }
+  }
+  const uitsluiters = (scoremodelBestand.tabellen[1] ?? []).map((rij) => ({
+    naam: rij.uitsluiter, eis: rij.eis,
+  }));
+
   // -------------------------------------------------------------- huisstijl
   const [lichteKleuren, donkereKleuren, ramp, maten] = huisstijl.tabellen;
   const maatvoering = Object.fromEntries(maten.map((rij) => [rij.sleutel, Number(rij.waarde)]));
@@ -188,5 +260,7 @@ export function laadInhoud(wortel) {
     teksten: { ...teksten.kop, ...teksten.secties },
     verantwoording: verantwoording.secties,
     themas, stellingen, leden, grenzen, locaties,
+    kandidaten, leads, scoremodel, uitsluiters,
+    verkenning: { ...kandidatenBestand.kop, scoremodelbron: scoremodelBestand.kop.bron },
   };
 }

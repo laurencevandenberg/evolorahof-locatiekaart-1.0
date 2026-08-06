@@ -9,6 +9,8 @@
 import { naarHtml, escapeHtml } from './markdown.mjs';
 import { getal } from './svg.mjs';
 import { STATUS, statusLegenda } from './panelen/status.mjs';
+import { wegingenLegenda } from './panelen/wegingen.mjs';
+import { kandidatenLegenda } from './panelen/kandidaten.mjs';
 
 /** De interactielaag. Klein genoeg om in te lezen, en het dashboard werkt ook zonder. */
 const SCRIPT = `
@@ -138,6 +140,14 @@ const verantwoording = (secties) => Object.entries(secties)
     return `<b>${escapeHtml(kop)}.</b> ${naarHtml(tekst)}`;
   }).join('<br>');
 
+/** Sprongnavigatie. Werkt zonder JavaScript, want het zijn gewone ankers. */
+const navigatie = (teksten) => `
+  <nav class="sprong" aria-label="secties">
+    <a href="#pve">${escapeHtml(teksten['nav-pve'])}</a>
+    <a href="#verkenning">${escapeHtml(teksten['nav-verkenning'])}</a>
+    <a href="kaart.html">${escapeHtml(teksten['knop-kaart'])}</a>
+  </nav>`;
+
 export function bouwPagina({ inhoud, panelen, cijfers, stellingen, css, waarschuwingen }) {
   const t = inhoud.teksten;
   const waarschuwing = waarschuwingen.length
@@ -170,11 +180,16 @@ ${css}
         data-naar-licht="${escapeHtml(t['knop-licht'])}">${escapeHtml(t['knop-donker'])}</button>
       <button class="knop" id="tabelknop" aria-pressed="false"
         aria-controls="tabelpaneel">${escapeHtml(t['knop-tabel'])}</button>
+      <a class="knop" href="kaart.html">${escapeHtml(t['knop-kaart'])}</a>
     </div>
   </div>
 
+  ${navigatie(t)}
+
   ${waarschuwing}
   ${tegels(cijfers, t)}
+
+  <h2 class="afdeling" id="pve">het programma van eisen</h2>
 
   ${paneel(t['ladder-titel'], t['ladder-uitleg'], panelen.ladder,
     statusLegenda(t, t['legenda-ladder']))}
@@ -193,6 +208,15 @@ ${css}
   </div>
 
   ${paneel(t['plekken-titel'], t['plekken-uitleg'], panelen.plekken)}
+
+  <h2 class="afdeling" id="verkenning">de locatieverkenning</h2>
+  <p class="afdeling-uitleg">Wat hierboven staat gaat over wat wij willen. Wat hieronder
+  staat gaat over wat er is: de brede locatieverkenning van 16 juli 2026, met 48 benoemde
+  kandidaten en 283 perceel-leads. De twee ontmoeten elkaar in het eerste paneel.</p>
+
+  ${paneel(t['wegingen-titel'], t['wegingen-uitleg'], panelen.wegingen, wegingenLegenda)}
+  ${paneel(t['kandidaten-titel'], t['kandidaten-uitleg'], panelen.kandidaten, kandidatenLegenda)}
+  ${paneel(t['leads-titel'], t['leads-uitleg'], panelen.leads)}
 
   <section class="paneel verborgen" id="tabelpaneel">
     <h2>${escapeHtml(t['tabel-titel'])}</h2>

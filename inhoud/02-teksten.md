@@ -7,6 +7,7 @@ kop-rest: over eens zijn.
 knop-donker: donkere modus
 knop-licht: lichte modus
 knop-tabel: toon als tabel
+knop-kaart: open de kaart
 ---
 
 # Teksten
@@ -128,3 +129,54 @@ stellingen waar de groep in tweeën ligt
 ## tegel-verdeeld-bij
 
 geen meerderheid, of exact vier tegen vier
+
+## wegingen-titel
+
+twee wegingen naast elkaar.
+
+## wegingen-uitleg
+
+De brede locatieverkenning van 16 juli weegt ook, over negen eigen criteria. Vertaald
+naar dezelfde negen thema's is te zien waar de verkenning en de groep het oneens zijn
+over wat ertoe doet. De grijze band loopt van spoor A naar spoor B; de groene stip is de
+weging van de groep. Ligt de stip buiten de band, dan kijken de twee modellen wezenlijk
+anders naar dat thema. De verkenning weegt of een plek haalbaar is, de groep weegt of
+het er goed wonen is, en geen van beide meet wat het andere belangrijk vindt.
+
+## kandidaten-titel
+
+de achtenveertig kandidaten.
+
+## kandidaten-uitleg
+
+Alle benoemde kandidaten uit de verkenning, per regio en op prioriteit. Een dicht blokje
+heeft ook themascores en telt mee in de rest van dit dashboard. Een gestippeld blokje
+staat wel op de kaart maar nergens in een berekening.
+
+Kijk naar de rijen. **Alle twaalf gescoorde plekken liggen in de regio Arnhem.** Van
+Apeldoorn en Den Bosch samen, eenendertig kandidaten, is er niet één gescoord, en zeven
+van de negen kandidaten met hoge prioriteit staan daartussen. Het PvE heeft dus over
+één regio geoordeeld en de verkenning over drie.
+
+## leads-titel
+
+de perceel-leads.
+
+## leads-uitleg
+
+De onderste laag: percelen van 1,5 tot 2 hectare uit de Kadastrale Kaart, in twaalf
+zoekzones. Alleen ligging en oppervlakte zijn bekend; eigenaar, bestemming en
+netcapaciteit niet. Let op de verhouding met de rest: 283 leads, 48 kandidaten, 12
+plekken met themascores.
+
+## kaart-knop
+
+open de kaart
+
+## nav-pve
+
+het programma van eisen
+
+## nav-verkenning
+
+de locatieverkenning

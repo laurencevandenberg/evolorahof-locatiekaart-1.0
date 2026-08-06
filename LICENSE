@@ -1,0 +1,20 @@
+MIT-licentie
+
+Copyright (c) 2026 Laurence van den Berg, initiatiefgroep Evolorahof
+
+Hierbij wordt gratis toestemming verleend aan eenieder die een kopie van deze software
+en de bijbehorende documentatiebestanden (de "Software") verkrijgt, om de Software
+zonder beperking te gebruiken, kopiëren, wijzigen, samenvoegen, publiceren,
+distribueren, in sublicentie te geven en te verkopen, en om personen aan wie de Software
+wordt geleverd toe te staan hetzelfde te doen, onder de volgende voorwaarden:
+
+Bovenstaande copyrightvermelding en deze toestemmingsvermelding worden opgenomen in alle
+kopieën of substantiële delen van de Software.
+
+DE SOFTWARE WORDT GELEVERD "ZOALS ZIJ IS", ZONDER ENIGE GARANTIE, UITDRUKKELIJK OF
+IMPLICIET, INCLUSIEF MAAR NIET BEPERKT TOT GARANTIES VAN VERKOOPBAARHEID, GESCHIKTHEID
+VOOR EEN BEPAALD DOEL EN NIET-INBREUKMAKENDHEID. IN GEEN GEVAL ZIJN DE AUTEURS OF
+RECHTHEBBENDEN AANSPRAKELIJK VOOR ENIGE CLAIM, SCHADE OF ANDERE AANSPRAKELIJKHEID.
+
+Deze licentie geldt voor de code in `src/` en `test/`. De inhoud in `inhoud/` gaat over
+het initiatief Evolorahof en blijft eigendom van de initiatiefgroep.
